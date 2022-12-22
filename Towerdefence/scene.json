@@ -2,58 +2,99 @@
   "everything": [
     {
       "datatype": 0,
-      "sizeX": 240,
-      "sizeY": 60,
+      "sizeX": 240.0,
+      "sizeY": 60.0,
       "centerpositionX": 10.0,
       "centerpositionY": 10.0,
       "tex": "whitemonster"
     },
-
     {
       "datatype": 0,
-      "sizeX": 240,
-      "sizeY": 60,
-      "centerpositionX": 20.0,
-      "centerpositionY": 20.0,
+      "sizeX": 240.0,
+      "sizeY": 60.0,
+      "centerpositionX": 1336.0,
+      "centerpositionY": 441.0,
       "tex": "blackmonster"
     },
-
     {
       "datatype": 1,
-      "sizeX": 240,
-      "sizeY": 135,
-      "centerpositionX": 30.0,
-      "centerpositionY": 30.0,
+      "sizeX": 240.0,
+      "sizeY": 135.0,
+      "centerpositionX": 931.0,
+      "centerpositionY": 1024.0,
       "tex": "castle"
     },
-
     {
       "datatype": 1,
-      "sizeX": 240,
-      "sizeY": 135,
-      "centerpositionX": 40.0,
-      "centerpositionY": 40.0,
+      "sizeX": 240.0,
+      "sizeY": 135.0,
+      "centerpositionX": 689.0,
+      "centerpositionY": 1029.0,
       "tex": "moonTower"
     },
-
     {
       "datatype": 1,
-      "sizeX": 240,
-      "sizeY": 135,
-      "centerpositionX": 50.0,
-      "centerpositionY": 50.0,
+      "sizeX": 240.0,
+      "sizeY": 135.0,
+      "centerpositionX": 1155.0,
+      "centerpositionY": 1030.0,
       "tex": "suntower"
     },
-
-
     {
       "datatype": 1,
-      "sizeX": 240,
-      "sizeY": 135,
-      "centerpositionX": 0.0,
-      "centerpositionY": 0.0,
+      "sizeX": 240.0,
+      "sizeY": 135.0,
+      "centerpositionX": 1821.0,
+      "centerpositionY": 1023.0,
+      "tex": "castle"
+    },
+    {
+      "datatype": 1,
+      "sizeX": 240.0,
+      "sizeY": 135.0,
+      "centerpositionX": 131.0,
+      "centerpositionY": 1024.0,
+      "tex": "castle"
+    },
+    {
+      "datatype": 1,
+      "sizeX": 240.0,
+      "sizeY": 135.0,
+      "centerpositionX": 1616.0,
+      "centerpositionY": 1029.0,
       "tex": "wall"
+    },
+    {
+      "datatype": 1,
+      "sizeX": 240.0,
+      "sizeY": 135.0,
+      "centerpositionX": 1373.0,
+      "centerpositionY": 1024.0,
+      "tex": "wall"
+    },
+    {
+      "datatype": 1,
+      "sizeX": 240.0,
+      "sizeY": 135.0,
+      "centerpositionX": 321.0,
+      "centerpositionY": 1021.0,
+      "tex": "wall"
+    },
+    {
+      "datatype": 1,
+      "sizeX": 240.0,
+      "sizeY": 135.0,
+      "centerpositionX": 511.0,
+      "centerpositionY": 1021.0,
+      "tex": "wall"
+    },
+    {
+      "datatype": 2,
+      "sizeX": 240.0,
+      "sizeY": 135.0,
+      "centerpositionX": 1856.0,
+      "centerpositionY": 125.0,
+      "tex": "sun"
     }
-
   ]
 }

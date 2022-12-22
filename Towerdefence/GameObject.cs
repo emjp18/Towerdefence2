@@ -59,10 +59,19 @@ namespace Towerdefence
             m_obb = obb;
             m_texName = texName;
         }
-        public void SetPosition(Vector2 pos) { m_obb.center= pos; }
+        public void SetPosition(Vector2 pos) { m_obb.center = pos; }
         public abstract void Draw(SpriteBatch sb);
         
-        public abstract void Update(float dt);
+        public virtual void Update(float dt)
+        {
+            m_obb.updir = PhysicsManager.TransformVector2x2(PhysicsManager.GetRotationMatrix2x2(m_obb.orientation), -Vector2.UnitY);
+            m_obb.leftdir = PhysicsManager.TransformVector2x2(PhysicsManager.GetRotationMatrix2x2(m_obb.orientation), -Vector2.UnitX);
+            m_obb.topLeft = m_obb.center + m_obb.updir * m_obb.size.Y * 0.5f + m_obb.leftdir * m_obb.size.X * 0.5f;
+            m_obb.downLeft = m_obb.center - m_obb.updir * m_obb.size.Y * 0.5f + m_obb.leftdir * m_obb.size.X * 0.5f;
+            m_obb.topRight = m_obb.center + m_obb.updir * m_obb.size.Y * 0.5f - m_obb.leftdir * m_obb.size.X * 0.5f;
+            m_obb.downRight = m_obb.center - m_obb.updir * m_obb.size.Y * 0.5f - m_obb.leftdir * m_obb.size.X * 0.5f;
+
+        }
         
         public Rectangle GetDestinationRectangle()
         {

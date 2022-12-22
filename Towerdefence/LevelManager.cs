@@ -9,7 +9,8 @@ namespace Towerdefence
 {
     internal class LevelManager : DrawableGameComponent
     {
-        bool pickup = false;
+
+        OBB m_obb = new OBB();
         public LevelManager(Game game) : base(game)
         {
         }
@@ -20,27 +21,28 @@ namespace Towerdefence
             {
                 case GAME_STATE.EDITOR:
                     {
-                        GameObject pickedup = null;
+                        if(KeyMouseReader.KeyPressed(Microsoft.Xna.Framework.Input.Keys.E))
+                        {
+                            m_obb.center = KeyMouseReader.mouseState.Position.ToVector2();
+                            m_obb.size = new Vector2(240.0f, 135.0f);
+                            ResourceManager.AddObject(new Tower(m_obb, "wall"));
+                        }
                         foreach (GameObject obj in ResourceManager.GetSetAllObjects())
                         {
                             float dt = (float)gametime.ElapsedGameTime.TotalSeconds;
                             obj.Update(dt);
 
-                            if (obj.GetDestinationRectangle().Contains(KeyMouseReader.mouseState.Position)&& KeyMouseReader.LeftClick()&&!pickup)
+                            if(KeyMouseReader.mouseState.LeftButton==Microsoft.Xna.Framework.Input.ButtonState.Pressed)
                             {
-                                pickedup = obj;
-                                pickup = true;
+                                if (obj.GetDestinationRectangle().Contains(KeyMouseReader.mouseState.Position))
+                                {
+                                    obj.SetPosition(KeyMouseReader.mouseState.Position.ToVector2());
 
+                                }
                             }
+                            
                         }
-                        if (pickup)
-                        {
-                            pickedup.SetPosition(KeyMouseReader.mouseState.Position.ToVector2());
-                            if(KeyMouseReader.LeftClick())
-                            {
-                                pickup = false;
-                            }
-                        }
+                       
                        
 
                         break;

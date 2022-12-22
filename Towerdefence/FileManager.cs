@@ -20,7 +20,7 @@ namespace Towerdefence
        public string texName;
         public Vector2 size;
     }
-    public enum DataType { Enemy = 0, Tower = 1};
+    public enum DataType { Enemy = 0, Tower = 1, Sky = 2};
     internal class FileManager
     {
   
@@ -42,12 +42,13 @@ namespace Towerdefence
             OBB obb = new OBB();
             foreach (JFILE_INFO fi in everythng)
             {
-                switch(fi.dt)
+                obb.center = fi.cp;
+                obb.size = fi.size;
+                switch (fi.dt)
                 {
                     case DataType.Enemy:
                         {
-                            obb.center = fi.cp;
-                            obb.size = fi.size;
+                            
                             ResourceManager.AddObject(new Enemy( obb, fi.texName));
                             break;
 
@@ -55,6 +56,12 @@ namespace Towerdefence
                     case DataType.Tower:
                         {
                             ResourceManager.AddObject(new Tower( obb, fi.texName));
+                            break;
+
+                        }
+                    case DataType.Sky:
+                        {
+                            ResourceManager.AddObject(new SkyObject(obb, fi.texName));
                             break;
 
                         }
@@ -78,17 +85,7 @@ namespace Towerdefence
             m_wholeObj = JObject.Load(reader);
             file.Close();
         }
-        //private JFILE_INFO GetJFile(string fileName, string
-        //propertyName)
-        //{
-        //    if (m_wholeObj == null || m_fileName == null ||
-        //    m_fileName != fileName)
-        //    {
-        //        GetJObjectFromFile(fileName);
-        //    }
-        //    JObject obj = (JObject)m_wholeObj.GetValue(propertyName);
-        //    return GetJFileInfo(obj);
-        //}
+       
         private List<JFILE_INFO> GetJFileInfo(string fileName, string propertyName)
         {
             if (m_wholeObj == null || m_fileName == null ||
@@ -137,7 +134,7 @@ namespace Towerdefence
 
             m_wholeObj.Add("everything", everything);
            
-            File.WriteAllText(m_directory+filename+".json", m_wholeObj.ToString());
+            File.WriteAllText(filename+".json", m_wholeObj.ToString());
         }
         private JObject CreateObject(GameObject obj)
         {
@@ -149,6 +146,10 @@ namespace Towerdefence
             else if(obj is Tower)
             {
                 jobj.Add("datatype", (int)DataType.Tower);
+            }
+            else if (obj is SkyObject)
+            {
+                jobj.Add("datatype", (int)DataType.Sky);
             }
             jobj.Add("sizeX", obj.obb.size.X);
             jobj.Add("sizeY", obj.obb.size.Y);
