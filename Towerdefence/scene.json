@@ -1,6 +1,22 @@
 {
   "everything": [
     {
+      "datatype": 2,
+      "sizeX": 1920.0,
+      "sizeY": 682.0,
+      "centerpositionX": 960.0,
+      "centerpositionY": 739.0,
+      "tex": "path"
+    },
+    {
+      "datatype": 2,
+      "sizeX": 1920.0,
+      "sizeY": 398.0,
+      "centerpositionX": 960.0,
+      "centerpositionY": 199.0,
+      "tex": "night"
+    },
+    {
       "datatype": 0,
       "sizeX": 240.0,
       "sizeY": 60.0,
@@ -94,7 +110,7 @@
       "sizeY": 135.0,
       "centerpositionX": 1856.0,
       "centerpositionY": 125.0,
-      "tex": "sun"
+      "tex": "moon"
     }
   ]
 }

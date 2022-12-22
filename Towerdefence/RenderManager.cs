@@ -26,6 +26,9 @@ namespace Towerdefence
             m_textures.Add("suntower");
             m_textures.Add("wall");
             m_textures.Add("whitemonster");
+            m_textures.Add("path");
+            m_textures.Add("day");
+            m_textures.Add("night");
         }
         protected override void LoadContent()
         {
