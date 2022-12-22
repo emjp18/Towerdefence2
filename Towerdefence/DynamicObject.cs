@@ -15,20 +15,25 @@ namespace Towerdefence
         
 
         
-        public DynamicObject(Texture2D tex, OBB obb, string texname)
-        : base(tex, obb, texname)
+        public DynamicObject( OBB obb, string texname)
+        : base( obb, texname)
         {
 
         }
         
         public override void Draw(SpriteBatch sb)
         {
-            sb.Draw(m_tex, GetDestinationRectangle(), GetSourceRectangle(),m_color, m_obb.orientation, m_obb.size * 0.5f, m_spriteeffects, 0); 
+            sb.Draw(ResourceManager.GetSetAllTextures()[m_texName], GetDestinationRectangle(), GetSourceRectangle(),m_color, m_obb.orientation, m_obb.size * 0.5f, m_spriteeffects, 0); 
         }
 
         public override void Update(float dt)
         {
-
+            m_obb.updir = PhysicsManager.TransformVector2x2(PhysicsManager.GetRotationMatrix2x2(m_obb.orientation), -Vector2.UnitY);
+            m_obb.leftdir = PhysicsManager.TransformVector2x2(PhysicsManager.GetRotationMatrix2x2(m_obb.orientation), -Vector2.UnitX);
+            m_obb.topLeft = m_obb.center - m_obb.updir * m_obb.size.Y - m_obb.leftdir * m_obb.size.X;
+            m_obb.downLeft = m_obb.center + m_obb.updir * m_obb.size.Y + m_obb.leftdir * m_obb.size.X;
+            m_obb.topRight = m_obb.center +- m_obb.updir * m_obb.size.Y + m_obb.leftdir * m_obb.size.X;
+            m_obb.downRight = m_obb.center + m_obb.updir * m_obb.size.Y - m_obb.leftdir * m_obb.size.X;
         }
         
     }

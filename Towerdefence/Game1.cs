@@ -2,13 +2,14 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+
 namespace Towerdefence
 {
     public class Game1 : Game
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-
+        GameManager m_gameManager;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -18,8 +19,12 @@ namespace Towerdefence
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
+            m_gameManager = new GameManager(this);
+            _graphics.PreferredBackBufferWidth = 1920;
+            _graphics.PreferredBackBufferHeight = 1080;
+            _graphics.ApplyChanges();
+            Components.Add(m_gameManager.rendermanager);
+            Components.Add(m_gameManager.levelmanager);
             base.Initialize();
         }
 
@@ -27,15 +32,19 @@ namespace Towerdefence
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            base.LoadContent();
         }
 
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            {
+                m_gameManager.filemanager.WriteToFile("scene", ResourceManager.GetSetAllObjects());
                 Exit();
+            }
+               
 
-            // TODO: Add your update logic here
+            m_gameManager.GameLoop();
 
             base.Update(gameTime);
         }
@@ -44,7 +53,7 @@ namespace Towerdefence
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+     
 
             base.Draw(gameTime);
         }

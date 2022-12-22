@@ -8,8 +8,8 @@ namespace Towerdefence
 {
     internal class Enemy : DynamicObject
     {
-        public Enemy(Texture2D tex, OBB obb, string texname)
-        : base(tex, obb, texname)
+        public Enemy( OBB obb, string texname)
+        : base( obb, texname)
         {
 
         }

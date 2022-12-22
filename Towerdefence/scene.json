@@ -1,0 +1,59 @@
+{
+  "everything": [
+    {
+      "datatype": 0,
+      "sizeX": 240,
+      "sizeY": 60,
+      "centerpositionX": 10.0,
+      "centerpositionY": 10.0,
+      "tex": "whitemonster"
+    },
+
+    {
+      "datatype": 0,
+      "sizeX": 240,
+      "sizeY": 60,
+      "centerpositionX": 20.0,
+      "centerpositionY": 20.0,
+      "tex": "blackmonster"
+    },
+
+    {
+      "datatype": 1,
+      "sizeX": 240,
+      "sizeY": 135,
+      "centerpositionX": 30.0,
+      "centerpositionY": 30.0,
+      "tex": "castle"
+    },
+
+    {
+      "datatype": 1,
+      "sizeX": 240,
+      "sizeY": 135,
+      "centerpositionX": 40.0,
+      "centerpositionY": 40.0,
+      "tex": "moonTower"
+    },
+
+    {
+      "datatype": 1,
+      "sizeX": 240,
+      "sizeY": 135,
+      "centerpositionX": 50.0,
+      "centerpositionY": 50.0,
+      "tex": "suntower"
+    },
+
+
+    {
+      "datatype": 1,
+      "sizeX": 240,
+      "sizeY": 135,
+      "centerpositionX": 0.0,
+      "centerpositionY": 0.0,
+      "tex": "wall"
+    }
+
+  ]
+}
