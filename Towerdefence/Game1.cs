@@ -39,7 +39,7 @@ namespace Towerdefence
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             {
-                m_gameManager.filemanager.WriteToFile("scene", ResourceManager.GetSetAllObjects());
+                //m_gameManager.filemanager.WriteToFile("scene", ResourceManager.GetSetAllObjects());
                 Exit();
             }
                

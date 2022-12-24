@@ -14,7 +14,7 @@
       "sizeY": 398.0,
       "centerpositionX": 960.0,
       "centerpositionY": 199.0,
-      "tex": "night"
+      "tex": "day"
     },
     {
       "datatype": 0,
@@ -110,7 +110,7 @@
       "sizeY": 135.0,
       "centerpositionX": 1856.0,
       "centerpositionY": 125.0,
-      "tex": "moon"
+      "tex": "sun"
     }
   ]
 }

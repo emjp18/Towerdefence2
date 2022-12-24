@@ -13,7 +13,7 @@ namespace Towerdefence
         LevelManager m_levelManager;
         RenderManager m_renderManager;
         FileManager m_fileManager;
-        static GAME_STATE m_state = GAME_STATE.EDITOR;
+        static GAME_STATE m_state = GAME_STATE.GAME;
         static GAME_STATE m_oldstate = GAME_STATE.MENU;
         int m_level = 0;
         public FileManager filemanager
