@@ -19,16 +19,17 @@ namespace Towerdefence
         float m_celestialSpeed;
         bool m_day = true;
         Timer m_enemySpawnTimer = new Timer();
-        double m_enemyspawn = 10;
-   
-        
+        Timer m_enemytoughTimer = new Timer();
+        double m_enemyspawn = 5;
+     
+
         Random m_random= new Random();
         public LevelManager(Game game) : base(game)
         {
             m_dayNightCycle.ResetAndStart(m_nightTime);
             m_celestialSpeed = m_celestialObjectPos.X / (float)m_dayTime;
             m_enemySpawnTimer.ResetAndStart(m_enemyspawn);
-
+            m_enemytoughTimer.ResetAndStart(m_enemyspawn * 2);
         }
 
         public override void Update(GameTime gametime)
@@ -71,34 +72,79 @@ namespace Towerdefence
                         m_celestialObjectPos.X -= (float)dt * m_celestialSpeed;
                         m_dayNightCycle.Update(dt);
                         m_enemySpawnTimer.Update(dt);
+                        m_enemytoughTimer.Update(dt);
                         m_day = oldday;      
                        
                         foreach (GameObject obj in ResourceManager.GetSetAllObjects())
                         {
                             if(obj is Enemy)
                             {
-                                for(int i=0; i<5; i++)
+                               if(obj.texName=="whitemonster")
                                 {
-                                    Vector2 pos1 = ResourceManager.pathLeft.GetPos(i);
-                                    Vector2 pos2 = ResourceManager.pathLeft.GetPos(i+1);
+                                    for (int i = 0; i < 5; i++)
+                                    {
+                                        Vector2 pos1 = ResourceManager.pathRight.GetPos(i);
+                                        Vector2 pos2 = ResourceManager.pathRight.GetPos(i + 1);
+                                        if (obj.obb.center.X > pos2.X
+                                            && obj.obb.center.X <= pos1.X)
+                                        {
+                                            Vector2 dir = pos2 - pos1;
+                                            dir.Normalize();
+                                            (obj as Enemy).AddForce(dir);
+                                            break;
+                                        }
+                                        else if (obj.obb.center.Y > pos1.Y
+                                            && obj.obb.center.Y < pos2.Y)
+                                        {
+                                            Vector2 dir = pos2 - pos1;
+                                            dir.Normalize();
+                                            (obj as Enemy).AddForce(dir);
+                                            break;
+                                        }
+                                        else if (
+                                          obj.obb.center.Y <= pos1.Y)
+                                        {
+                                            obj.SetPosition(ResourceManager.pathRight.GetPos(0) + Vector2.UnitY * 10);
 
-                                    if (obj.obb.center.X > pos1.X && obj.obb.center.Y > pos1.Y
-                                        && obj.obb.center.X < pos2.X && obj.obb.center.Y < pos2.Y)
-                                    {
-                                        Vector2 dir = pos2 - pos1;
-                                        dir.Normalize();
-                                        (obj as Enemy).AddForce(dir);
-                                        break;
-                                    }
-                                    if (
-                                      obj.obb.center.X < pos1.X && obj.obb.center.Y < pos1.Y)
-                                    {
-                                        Vector2 dir = pos2 - pos1;
-                                        dir.Normalize();
-                                        (obj as Enemy).AddForce(dir);
-                                        break;
+                                            break;
+                                        }
+
                                     }
                                 }
+                               else
+                                {
+                                    for (int i = 0; i < 5; i++)
+                                    {
+                                        Vector2 pos1 = ResourceManager.pathLeft.GetPos(i);
+                                        Vector2 pos2 = ResourceManager.pathLeft.GetPos(i + 1);
+                                        if (obj.obb.center.X >= pos1.X
+                                            && obj.obb.center.X < pos2.X)
+                                        {
+                                            Vector2 dir = pos2 - pos1;
+                                            dir.Normalize();
+                                            (obj as Enemy).AddForce(dir);
+                                            break;
+                                        }
+                                        else if (obj.obb.center.Y > pos1.Y
+                                            && obj.obb.center.Y < pos2.Y)
+                                        {
+                                            Vector2 dir = pos2 - pos1;
+                                            dir.Normalize();
+                                            (obj as Enemy).AddForce(dir);
+                                            break;
+                                        }
+                                        else if (
+                                          obj.obb.center.Y <= pos1.Y)
+                                        {
+                                            obj.SetPosition(ResourceManager.pathLeft.GetPos(0) + Vector2.UnitY * 10);
+
+                                            break;
+                                        }
+                                        
+                                    }
+                                }
+                                    
+                                
                             }
                             if (obj.texName == "day")
                             {
@@ -148,10 +194,20 @@ namespace Towerdefence
                             if (m_enemySpawnTimer.IsDone())
                             {
                                 m_obb.center = ResourceManager.pathLeft.GetPos(0);
-                                GameObject go = new Enemy(m_obb, "whitemonster");
+                                m_obb.size = new Vector2(240, 60);
+                                GameObject go = new Enemy(m_obb, "blackmonster");
                                 (go as Enemy).speed = m_random.Next(500, 700);
                                 ResourceManager.AddObject(go);
                                 m_enemySpawnTimer.ResetAndStart(m_enemyspawn);
+                            }
+                            if(m_enemytoughTimer.IsDone())
+                            {
+                                m_obb.center = ResourceManager.pathRight.GetPos(0);
+                                m_obb.size = new Vector2(240, 60);
+                                GameObject go = new Enemy(m_obb, "whitemonster");
+                                (go as Enemy).speed = m_random.Next(700, 900);
+                                ResourceManager.AddObject(go);
+                                m_enemytoughTimer.ResetAndStart(m_enemyspawn * 2);
                             }
                         }
                         break;

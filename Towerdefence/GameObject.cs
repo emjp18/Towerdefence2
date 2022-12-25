@@ -77,6 +77,7 @@ namespace Towerdefence
         {
             return new Rectangle(m_obb.topLeft.ToPoint(), m_obb.size.ToPoint());
         }
-        public Rectangle GetSourceRectangle() { return new Rectangle(source, m_obb.size.ToPoint()); }
+        public Rectangle GetSourceRectangle() { return new Rectangle(source, new Point(ResourceManager.GetSetAllTextures()[m_texName].Width,
+            ResourceManager.GetSetAllTextures()[m_texName].Height));  }
     }
 }

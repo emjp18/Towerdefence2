@@ -82,15 +82,17 @@ namespace Towerdefence
             m_sb.Begin();
             foreach (GameObject obj in ResourceManager.GetSetAllObjects())
             {
-               
                 obj.Draw(m_sb);
-              
+
+
+
+
             }
 
-            m_enmypath1.DrawPoints(m_sb);
-            m_enmypath1.Draw(m_sb);
-            m_enemypath2.DrawPoints(m_sb);
-            m_enemypath2.Draw(m_sb);
+            //m_enmypath1.DrawPoints(m_sb);
+            //m_enmypath1.Draw(m_sb);
+            //m_enemypath2.DrawPoints(m_sb);
+            //m_enemypath2.Draw(m_sb);
             m_sb.End();
             base.Draw(gameTime);
         }

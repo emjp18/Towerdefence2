@@ -17,22 +17,6 @@
       "tex": "day"
     },
     {
-      "datatype": 0,
-      "sizeX": 240.0,
-      "sizeY": 60.0,
-      "centerpositionX": 10.0,
-      "centerpositionY": 10.0,
-      "tex": "whitemonster"
-    },
-    {
-      "datatype": 0,
-      "sizeX": 240.0,
-      "sizeY": 60.0,
-      "centerpositionX": 1336.0,
-      "centerpositionY": 441.0,
-      "tex": "blackmonster"
-    },
-    {
       "datatype": 1,
       "sizeX": 240.0,
       "sizeY": 135.0,
