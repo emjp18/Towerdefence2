@@ -24,6 +24,10 @@ namespace Towerdefence
         Vector2 m_camPos;
         float m_camSpeed = 500;
         Random m_random= new Random();
+        float m_pathwidth = 100;
+        int money = 1000;
+        Vector2 m_mtv = Vector2.Zero;
+        Timer m_buyTimer = new Timer();
         public LevelManager(Game game) : base(game)
         {
             m_dayNightCycle.ResetAndStart(m_nightTime);
@@ -31,8 +35,41 @@ namespace Towerdefence
             m_enemySpawnTimer.ResetAndStart(m_enemyspawn);
             m_enemytoughTimer.ResetAndStart(m_enemyspawn * 2);
             m_camPos = new Vector2(1000,1000);
-        }
+            m_buyTimer.ResetAndStart(3);
 
+
+        }
+        public bool WithinPath(Point p)
+        {
+            if(p.X<m_pathwidth&&p.X>0)
+            {
+                if(p.Y>ResourceManager.pathLeft.GetPos(0).Y&&p.Y<ResourceManager.pathLeft.GetPos(1).Y)
+                {
+                    return true;
+                }
+                if (p.Y > ResourceManager.pathLeft.GetPos(1).Y && p.Y < ResourceManager.pathLeft.GetPos(2).Y)
+                {
+                    return true;
+                }
+                if (p.Y > ResourceManager.pathLeft.GetPos(2).Y && p.Y < ResourceManager.pathLeft.GetPos(3).Y)
+                {
+                    return true;
+                }
+                if (p.Y > ResourceManager.pathLeft.GetPos(3).Y && p.Y < ResourceManager.pathLeft.GetPos(4).Y)
+                {
+                    return true;
+                }
+                if (p.Y > ResourceManager.pathLeft.GetPos(4).Y && p.Y < ResourceManager.pathLeft.GetPos(5).Y)
+                {
+                    return true;
+                }
+                if (p.Y > ResourceManager.pathLeft.GetPos(5).Y)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
         public override void Update(GameTime gametime)
         {
             switch(GameManager.state)
@@ -74,7 +111,74 @@ namespace Towerdefence
                         m_dayNightCycle.Update(dt);
                         m_enemySpawnTimer.Update(dt);
                         m_enemytoughTimer.Update(dt);
+                        m_buyTimer.Update(dt);
                         m_day = oldday;
+
+                        Vector3 cameratranslation = ResourceManager.camera.MV.Translation;
+                        Vector2 mouseP = new Vector2(-(int)cameratranslation.X / 2, -(int)cameratranslation.Y / 2) 
+                            + KeyMouseReader.mouseState.Position.ToVector2() * 0.5f - new Vector2(
+                120, 120) * 0.5f;
+                       
+
+
+
+                        if (KeyMouseReader.LeftClick()&& !WithinPath(mouseP.ToPoint()) &&m_day&&money>=100 && mouseP.Y < 900)
+                        {
+                            
+                            m_obb.size = new Vector2(120.0f, 67.0f);
+                            m_obb.center = mouseP + m_obb.size * 0.5f ;
+                            GameObject t = new Tower(m_obb, "suntower");
+                            t.Update((float)dt);
+                            bool collidingwithtower = false;
+                            foreach (GameObject obj in ResourceManager.GetSetAllObjects())
+                            {
+                                if(obj is Tower)
+                                {
+                                    if (PhysicsManager.SAT(obj, t))
+                                    {
+                                        collidingwithtower = true;
+                                        ResourceManager.GetSetAllObjects().Remove(obj);
+                                        break;
+                                    }
+                                }
+                            }
+                            if(!collidingwithtower)
+                            {
+                                ResourceManager.AddObject(t);
+                                money -= 100;
+                            }
+                          
+
+                        }
+                        if (KeyMouseReader.RightClick() && !WithinPath(mouseP.ToPoint()) && m_day && money >= 100 && mouseP.Y < 900)
+                        {
+                           
+                            m_obb.size = new Vector2(120.0f, 67.0f);
+                            m_obb.center = mouseP + m_obb.size * 0.5f;
+                            GameObject t = new Tower(m_obb, "moonTower");
+                            t.Update((float)dt);
+                            bool collidingwithtower = false;
+                            foreach (GameObject obj in ResourceManager.GetSetAllObjects())
+                            {
+                                if (obj is Tower)
+                                {
+                                    if (PhysicsManager.SAT(obj, t))
+                                    {
+                                        collidingwithtower = true;
+                                        ResourceManager.GetSetAllObjects().Remove(obj);
+                                        break;
+                                    }
+                                }
+                            }
+                            if (!collidingwithtower)
+                            {
+                                ResourceManager.AddObject(t);
+                                money -= 100;
+                            }
+
+
+                        }
+
                         if (KeyMouseReader.KeyHeld(Microsoft.Xna.Framework.Input.Keys.Left))
                         {
                             m_camPos.X -= (float)dt * m_camSpeed;
@@ -210,7 +314,7 @@ namespace Towerdefence
                         {
                             if (m_enemySpawnTimer.IsDone())
                             {
-                                m_obb.center = ResourceManager.pathLeft.GetPos(0);
+                                m_obb.center = ResourceManager.pathLeft.GetPos(0) + Vector2.UnitY * 10;
                                 m_obb.size = new Vector2(240, 60);
                                 GameObject go = new Enemy(m_obb, "blackmonster");
                                 (go as Enemy).speed = m_random.Next(500, 700);
@@ -219,7 +323,7 @@ namespace Towerdefence
                             }
                             if(m_enemytoughTimer.IsDone())
                             {
-                                m_obb.center = ResourceManager.pathRight.GetPos(0);
+                                m_obb.center = ResourceManager.pathRight.GetPos(0) + Vector2.UnitY * 10;
                                 m_obb.size = new Vector2(240, 60);
                                 GameObject go = new Enemy(m_obb, "whitemonster");
                                 (go as Enemy).speed = m_random.Next(700, 900);

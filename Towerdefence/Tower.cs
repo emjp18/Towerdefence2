@@ -13,6 +13,11 @@ namespace Towerdefence
         {
            
         }
+        public override void Update(float dt)
+        {
+
+            base.Update(dt);
+        }
         public override void Draw(SpriteBatch sb)
         {
             sb.Draw(ResourceManager.GetSetAllTextures()[m_texName], GetDestinationRectangle(), m_color);

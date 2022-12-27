@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 
 namespace Towerdefence
 {
@@ -219,7 +220,87 @@ namespace Towerdefence
             }
             return minNormal * (minDistance + 0.001f);
         }
-        public static bool GJK(GameObject a, GameObject b)
+        public static bool SAT(GameObject a, GameObject b)
+        {
+
+            float[] max = new float[4] { float.MinValue, float.MinValue, float.MinValue, float.MinValue };
+            float[] max2 = new float[4] { float.MinValue, float.MinValue, float.MinValue, float.MinValue };
+            float[] min = new float[4] { float.MaxValue, float.MaxValue, float.MaxValue, float.MaxValue };
+            float[] min2 = new float[4] { float.MaxValue, float.MaxValue, float.MaxValue, float.MaxValue };
+
+            Vector2[] axis = new Vector2[2] { a.obb.updir, a.obb.leftdir };
+            Vector2[] axis2 = new Vector2[2] { b.obb.updir, b.obb.leftdir };
+            Vector2[] corners = new Vector2[4] { a.obb.topLeft, a.obb.downLeft, a.obb.topRight, a.obb.downRight };
+            Vector2[] corners2 = new Vector2[4] { b.obb.topLeft, b.obb.downLeft, b.obb.topRight, b.obb.downRight };
+
+            for (int i = 0; i < 2; i++)
+            {
+                axis[i].Normalize();
+                axis2[i].Normalize();
+            }
+            for (int i = 0; i < 4; i++)
+            {
+                float d = Vector2.Dot(corners[i], axis[0]);
+                if (d > max[0])
+                    max[0] = d;
+                if (d < min[0])
+                    min[0] = d;
+
+                float d2 = Vector2.Dot(corners2[i], axis[0]);
+                if (d2 > max2[0])
+                    max2[0] = d2;
+                if (d2 < min2[0])
+                    min2[0] = d2;
+
+
+                d = Vector2.Dot(corners[i], axis[1]);
+                if (d > max[1])
+                    max[1] = d;
+                if (d < min[1])
+                    min[1] = d;
+
+                d2 = Vector2.Dot(corners2[i], axis[1]);
+                if (d2 > max2[1])
+                    max2[1] = d2;
+                if (d2 < min2[1])
+                    min2[1] = d2;
+
+                d = Vector2.Dot(corners[i], axis2[0]);
+                if (d > max[2])
+                    max[2] = d;
+                if (d < min[2])
+                    min[2] = d;
+
+                d2 = Vector2.Dot(corners2[i], axis2[0]);
+                if (d2 > max2[2])
+                    max2[2] = d2;
+                if (d2 < min2[2])
+                    min2[2] = d2;
+
+                d = Vector2.Dot(corners[i], axis2[1]);
+                if (d > max[3])
+                    max[3] = d;
+                if (d < min[3])
+                    min[3] = d;
+
+                d2 = Vector2.Dot(corners2[i], axis2[1]);
+                if (d2 > max2[3])
+                    max2[3] = d2;
+                if (d2 < min2[3])
+                    min2[3] = d2;
+            }
+            if ((min[0] > max2[0]) || min2[0] > max[0])
+                return false;
+            if ((min[1] > max2[1]) || min2[1] > max[1])
+                return false;
+            if ((min[2] > max2[2]) || min2[2] > max[2])
+                return false;
+            if ((min[3] > max2[3]) || min2[3] > max[3])
+                return false;
+
+            return true;
+        }
+        public static bool GJK(GameObject a, GameObject b, ref Vector2 mtv)
         {
             List<Vector2> simplex = new List<Vector2>();
 
@@ -250,8 +331,8 @@ namespace Towerdefence
             }
             if (colliding)
             {
-                Vector2 mtv = EPA(a.obb, b.obb, simplex);
-                a.SetPosition(a.obb.center + mtv + simplex[simplex.Count() - 1]);
+                mtv = EPA(a.obb, b.obb, simplex);
+                mtv += simplex[simplex.Count() - 1];
                 
             }
 
@@ -259,6 +340,7 @@ namespace Towerdefence
 
 
         }
+        
     }
     
 }

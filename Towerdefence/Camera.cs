@@ -22,25 +22,25 @@ namespace Towerdefence
         {
 
 
-            if (pos.X > Game1.resolutionX * 0.75f)
+            if (pos.X > Game1.resolutionX)
             {
-                pos.X = Game1.resolutionX * 0.75f;
+                pos.X = Game1.resolutionX;
             }
-            if (pos.Y > Game1.resolutionY*0.75f)
+            if (pos.Y > Game1.resolutionY) 
             {
-                pos.Y = Game1.resolutionY * 0.75f;
+                pos.Y = Game1.resolutionY;
             }
-            if (pos.X < Game1.resolutionX / 4)
+            if (pos.X <0)
             {
-                pos.X = Game1.resolutionX / 4;
+                pos.X = 0;
             }
-            if (pos.Y < Game1.resolutionY / 4)
+            if (pos.Y < 0)
             {
-                pos.Y = Game1.resolutionY / 4;
+                pos.Y = 0;
             }
             m_pos = pos;
 
-            m_mv = Matrix.CreateTranslation(-pos.X, -pos.Y, 0) * Matrix.CreateScale(2, 2, 1) * Matrix.CreateTranslation(Game1.resolutionX / 2, Game1.resolutionY / 2, 0);
+            m_mv =Matrix.CreateScale(2,2,1)* Matrix.CreateTranslation(-pos.X, -pos.Y, 0);
         }
         public Matrix MV
         {

@@ -17,7 +17,7 @@ namespace Towerdefence
         SimplePath m_enmypath1;
         SimplePath m_enemypath2;
         Vector2[] m_points = new Vector2[6];
-
+        Texture2D m_cursorTex;
         Rectangle m_destRenderTargetRectangle;
         RenderTarget2D m_rendertarget;
         public RenderManager(Game game) : base(game)
@@ -84,6 +84,7 @@ namespace Towerdefence
 
             m_rendertarget = new RenderTarget2D(Game.GraphicsDevice, Game1.resolutionX, Game1.resolutionY);
             m_destRenderTargetRectangle = new Rectangle(obb.topLeft.ToPoint(), obb.size.ToPoint());
+            m_cursorTex = Game.Content.Load<Texture2D>("cursor");
             base.LoadContent();
         }
 
@@ -114,9 +115,12 @@ namespace Towerdefence
 
 
             }
-            m_destRenderTargetRectangle.Location = ResourceManager.camera.Pos.ToPoint();
-            m_destRenderTargetRectangle.Location += new Point(Game1.resolutionX / 6, Game1.resolutionY / 8);
+            Vector3 t= ResourceManager.camera.MV.Translation;
+            m_destRenderTargetRectangle.Location = new Point(-(int)t.X/2, -(int)t.Y/2);
+       
             m_sb.Draw(m_rendertarget, m_destRenderTargetRectangle, Color.White);
+            m_sb.Draw(m_cursorTex, new Vector2(-(int)t.X / 2, -(int)t.Y / 2) + KeyMouseReader.mouseState.Position.ToVector2() * 0.5f - new Vector2(
+                m_cursorTex.Width, m_cursorTex.Height)*0.5f, Color.White);
             m_sb.End();
             base.Draw(gameTime);
         }
