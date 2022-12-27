@@ -209,6 +209,7 @@ namespace Towerdefence
                                 ResourceManager.AddObject(go);
                                 m_enemytoughTimer.ResetAndStart(m_enemyspawn * 2);
                             }
+
                         }
                         break;
                     }

@@ -32,7 +32,7 @@ namespace Towerdefence
             m_textures.Add("path");
             m_textures.Add("day");
             m_textures.Add("night");
-
+            m_textures.Add("health");
             m_enmypath1 = new SimplePath(game.GraphicsDevice);
             m_enemypath2 = new SimplePath(game.GraphicsDevice);
             m_enmypath1.Clean();

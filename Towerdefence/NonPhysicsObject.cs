@@ -7,9 +7,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 namespace Towerdefence
 {
-    internal class SkyObject : GameObject
+    internal class NonPhysicsObject : GameObject
     {
-        public SkyObject(OBB obb, string texname) : base(obb, texname)
+        public NonPhysicsObject(OBB obb, string texname) : base(obb, texname)
         {
 
         }

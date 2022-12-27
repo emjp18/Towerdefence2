@@ -61,7 +61,7 @@ namespace Towerdefence
                         }
                     case DataType.Sky:
                         {
-                            ResourceManager.AddObject(new SkyObject(obb, fi.texName));
+                            ResourceManager.AddObject(new NonPhysicsObject(obb, fi.texName));
                             break;
 
                         }
@@ -147,7 +147,7 @@ namespace Towerdefence
             {
                 jobj.Add("datatype", (int)DataType.Tower);
             }
-            else if (obj is SkyObject)
+            else if (obj is NonPhysicsObject)
             {
                 jobj.Add("datatype", (int)DataType.Sky);
             }
