@@ -24,6 +24,7 @@ namespace Towerdefence
         public Enemy( OBB obb, string texname)
         : base( obb, texname)
         {
+           
             m_animationTimer.ResetAndStart(m_secondsperFrame);
             m_sourcerect = GetSourceRectangle();
             m_sourcerect.Width /= 2;
@@ -33,9 +34,14 @@ namespace Towerdefence
             }
             obb.center.Y -= obb.size.Y*0.5f;
             m_healthsourcerect = GetSourceRectangle();
+            m_healthsourcerect.X = (int)obb.size.X;
             m_healthsourcerect.Height /= 4;
             obb.size.Y /= 4;
+            obb.size.X = 100;
+            
+            m_healthsourcerect.Width = 100;
             m_healthbar = new NonPhysicsObject(obb, "health");
+          
         }
         public override void Update(float dt)
         {
@@ -44,13 +50,15 @@ namespace Towerdefence
             {
                 Vector2 heatlhBarPos = obb.center;
                 heatlhBarPos.Y -= obb.size.Y * 0.5f;
+
                 m_healthbar.SetPosition(heatlhBarPos);
+                OBB temp = m_healthbar.obb;
+                temp.size.X = m_health;
+                m_healthbar.obb = temp;
                 m_healthbar.Update(dt);
-                float percentageofhealth = m_healthsourcerect.X;
-                percentageofhealth *= m_health;
-                m_healthsourcerect.X = (int)percentageofhealth;
+         
             }
-               
+           
             if (m_animationTimer.IsDone())
             {
 
@@ -67,7 +75,7 @@ namespace Towerdefence
             
             sb.Draw(ResourceManager.GetSetAllTextures()[m_texName], GetDestinationRectangle(), m_sourcerect, m_color, m_obb.orientation, m_obb.size * 0.5f, m_spriteeffects, 0);
             if(m_health>0)
-                sb.Draw(ResourceManager.GetSetAllTextures()[m_healthbar.texName], m_healthbar.GetDestinationRectangle(), m_sourcerect, m_healthbar.color, m_healthbar.obb.orientation, m_healthbar.obb.size*0.5f, m_healthbar.effect, 0);
+                sb.Draw(ResourceManager.GetSetAllTextures()[m_healthbar.texName], m_healthbar.GetDestinationRectangle(), m_healthsourcerect, m_healthbar.color, m_healthbar.obb.orientation, m_healthbar.obb.size*0.5f, m_healthbar.effect, 0);
         }
     }
 }

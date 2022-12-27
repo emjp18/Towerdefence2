@@ -211,7 +211,7 @@ namespace Towerdefence
                                         {
                                             Vector2 dir = pos2 - pos1;
                                             dir.Normalize();
-                                            (obj as Enemy).AddForce(dir);
+                                            (obj as Enemy).AddForce(dir*(obj as Enemy).speed);
                                             break;
                                         }
                                         else if (obj.obb.center.Y > pos1.Y
@@ -219,7 +219,7 @@ namespace Towerdefence
                                         {
                                             Vector2 dir = pos2 - pos1;
                                             dir.Normalize();
-                                            (obj as Enemy).AddForce(dir);
+                                            (obj as Enemy).AddForce(dir*(obj as Enemy).speed);
                                             break;
                                         }
                                         else if (
@@ -243,7 +243,7 @@ namespace Towerdefence
                                         {
                                             Vector2 dir = pos2 - pos1;
                                             dir.Normalize();
-                                            (obj as Enemy).AddForce(dir);
+                                            (obj as Enemy).AddForce(dir*(obj as Enemy).speed);
                                             break;
                                         }
                                         else if (obj.obb.center.Y > pos1.Y
@@ -251,7 +251,7 @@ namespace Towerdefence
                                         {
                                             Vector2 dir = pos2 - pos1;
                                             dir.Normalize();
-                                            (obj as Enemy).AddForce(dir);
+                                            (obj as Enemy).AddForce(dir*(obj as Enemy).speed);
                                             break;
                                         }
                                         else if (
@@ -309,6 +309,17 @@ namespace Towerdefence
 
                             obj.Update((float)dt);
 
+                        }
+                        foreach (GameObject obj in ResourceManager.GetSetAllObjects())
+                        {
+                            if(obj is Enemy)
+                            {
+                                if((obj as Enemy).health<=0)
+                                {
+                                    ResourceManager.GetSetAllObjects().Remove(obj);
+                                    break;
+                                }
+                            }
                         }
                         if (m_day)
                         {
