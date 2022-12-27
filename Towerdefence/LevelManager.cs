@@ -21,8 +21,8 @@ namespace Towerdefence
         Timer m_enemySpawnTimer = new Timer();
         Timer m_enemytoughTimer = new Timer();
         double m_enemyspawn = 5;
-     
-
+        Vector2 m_camPos;
+        float m_camSpeed = 500;
         Random m_random= new Random();
         public LevelManager(Game game) : base(game)
         {
@@ -30,6 +30,7 @@ namespace Towerdefence
             m_celestialSpeed = m_celestialObjectPos.X / (float)m_dayTime;
             m_enemySpawnTimer.ResetAndStart(m_enemyspawn);
             m_enemytoughTimer.ResetAndStart(m_enemyspawn * 2);
+            m_camPos = new Vector2(1000,1000);
         }
 
         public override void Update(GameTime gametime)
@@ -66,15 +67,31 @@ namespace Towerdefence
                     }
                 case GAME_STATE.GAME:
                     {
-                      
+                        
                         bool oldday = m_day;
                         double dt = gametime.ElapsedGameTime.TotalSeconds;
                         m_celestialObjectPos.X -= (float)dt * m_celestialSpeed;
                         m_dayNightCycle.Update(dt);
                         m_enemySpawnTimer.Update(dt);
                         m_enemytoughTimer.Update(dt);
-                        m_day = oldday;      
-                       
+                        m_day = oldday;
+                        if (KeyMouseReader.KeyHeld(Microsoft.Xna.Framework.Input.Keys.Left))
+                        {
+                            m_camPos.X -= (float)dt * m_camSpeed;
+                         }
+                        if (KeyMouseReader.KeyHeld(Microsoft.Xna.Framework.Input.Keys.Right))
+                        {
+                            m_camPos.X += (float)dt * m_camSpeed;
+                        }
+                        if (KeyMouseReader.KeyHeld(Microsoft.Xna.Framework.Input.Keys.Up))
+                        {
+                            m_camPos.Y -= (float)dt * m_camSpeed;
+                        }
+                        if (KeyMouseReader.KeyHeld(Microsoft.Xna.Framework.Input.Keys.Down))
+                        {
+                            m_camPos.Y += (float)dt * m_camSpeed;
+                        }
+                        ResourceManager.camera.Transform(m_camPos);
                         foreach (GameObject obj in ResourceManager.GetSetAllObjects())
                         {
                             if(obj is Enemy)

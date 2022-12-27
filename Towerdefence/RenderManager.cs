@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Towerdefence
 {
@@ -15,7 +16,10 @@ namespace Towerdefence
         List<string> m_textures = new List<string>();
         SimplePath m_enmypath1;
         SimplePath m_enemypath2;
-        Vector2[] points = new Vector2[6];
+        Vector2[] m_points = new Vector2[6];
+
+        Rectangle m_destRenderTargetRectangle;
+        RenderTarget2D m_rendertarget;
         public RenderManager(Game game) : base(game)
         {
             m_sb = new SpriteBatch(Game.GraphicsDevice);
@@ -37,30 +41,30 @@ namespace Towerdefence
             m_enemypath2 = new SimplePath(game.GraphicsDevice);
             m_enmypath1.Clean();
             m_enemypath2.Clean();
-            points[0] = new Vector2(250, 398);
-            points[1] = new Vector2(250, 180+ 398);
-            points[2] = new Vector2(490, 180 + 398);
-            points[3] = new Vector2(490, 400 + 398);
-            points[4] = new Vector2(900, 400 + 398);
-            points[5] = new Vector2(900, 1085);
-            m_enmypath1.AddPoint(points[0]);
-            m_enmypath1.AddPoint(points[1]);
-            m_enmypath1.AddPoint(points[2]);
-            m_enmypath1.AddPoint(points[3]);
-            m_enmypath1.AddPoint(points[4]);
-            m_enmypath1.AddPoint(points[5]);
-            points[0] = new Vector2(1920-300, 398);
-            points[1] = new Vector2(1920 - 300, 180 + 398);
-            points[2] = new Vector2(1920 - 640, 180 + 398);
-            points[3] = new Vector2(1920 - 640, 400 + 398);
-            points[4] = new Vector2(1920 -1050, 400 + 398);
-            points[5] = new Vector2(1920 - 1050, 1085);
-            m_enemypath2.AddPoint(points[0]);
-            m_enemypath2.AddPoint(points[1]);
-            m_enemypath2.AddPoint(points[2]);
-            m_enemypath2.AddPoint(points[3]);
-            m_enemypath2.AddPoint(points[4]);
-            m_enemypath2.AddPoint(points[5]);
+            m_points[0] = new Vector2(250, 398);
+            m_points[1] = new Vector2(250, 180+ 398);
+            m_points[2] = new Vector2(490, 180 + 398);
+            m_points[3] = new Vector2(490, 400 + 398);
+            m_points[4] = new Vector2(900, 400 + 398);
+            m_points[5] = new Vector2(900, 1085);
+            m_enmypath1.AddPoint(m_points[0]);
+            m_enmypath1.AddPoint(m_points[1]);
+            m_enmypath1.AddPoint(m_points[2]);
+            m_enmypath1.AddPoint(m_points[3]);
+            m_enmypath1.AddPoint(m_points[4]);
+            m_enmypath1.AddPoint(m_points[5]);
+            m_points[0] = new Vector2(1920-300, 398);
+            m_points[1] = new Vector2(1920 - 300, 180 + 398);
+            m_points[2] = new Vector2(1920 - 640, 180 + 398);
+            m_points[3] = new Vector2(1920 - 640, 400 + 398);
+            m_points[4] = new Vector2(1920 -1050, 400 + 398);
+            m_points[5] = new Vector2(1920 - 1050, 1085);
+            m_enemypath2.AddPoint(m_points[0]);
+            m_enemypath2.AddPoint(m_points[1]);
+            m_enemypath2.AddPoint(m_points[2]);
+            m_enemypath2.AddPoint(m_points[3]);
+            m_enemypath2.AddPoint(m_points[4]);
+            m_enemypath2.AddPoint(m_points[5]);
         }
         protected override void LoadContent()
         {
@@ -70,15 +74,24 @@ namespace Towerdefence
                 Texture2D tex = Game.Content.Load<Texture2D>(texn);
                 ResourceManager.GetSetAllTextures().Add(texn, tex);
             }
+         
             ResourceManager.pathLeft = m_enmypath1;
             ResourceManager.pathRight = m_enemypath2;
+
+            OBB obb = new OBB();
+            obb.topLeft = new Vector2(Game1.resolutionX - 150, Game1.resolutionY - 150);
+            obb.size = new Vector2(150, 150);
+
+            m_rendertarget = new RenderTarget2D(Game.GraphicsDevice, Game1.resolutionX, Game1.resolutionY);
+            m_destRenderTargetRectangle = new Rectangle(obb.topLeft.ToPoint(), obb.size.ToPoint());
             base.LoadContent();
         }
 
         public override void Draw(GameTime gameTime)
         {
-            //m_sb.Begin(SpriteSortMode.Deferred, null, null, null, null, null,
-            //     ResourceManager.GetCamera().vp);
+            
+            Game.GraphicsDevice.SetRenderTarget(m_rendertarget);
+            Game.GraphicsDevice.Clear(Color.AliceBlue);
             m_sb.Begin();
             foreach (GameObject obj in ResourceManager.GetSetAllObjects())
             {
@@ -88,11 +101,22 @@ namespace Towerdefence
 
 
             }
+            m_sb.End();
+            Game.GraphicsDevice.SetRenderTarget(null);
+            Game.GraphicsDevice.Clear(Color.AliceBlue);
+            m_sb.Begin(SpriteSortMode.Deferred, null, null, null, null, null,
+                 ResourceManager.camera.MV);
+            foreach (GameObject obj in ResourceManager.GetSetAllObjects())
+            {
+                obj.Draw(m_sb);
 
-            //m_enmypath1.DrawPoints(m_sb);
-            //m_enmypath1.Draw(m_sb);
-            //m_enemypath2.DrawPoints(m_sb);
-            //m_enemypath2.Draw(m_sb);
+
+
+
+            }
+            m_destRenderTargetRectangle.Location = ResourceManager.camera.Pos.ToPoint();
+            m_destRenderTargetRectangle.Location += new Point(Game1.resolutionX / 6, Game1.resolutionY / 8);
+            m_sb.Draw(m_rendertarget, m_destRenderTargetRectangle, Color.White);
             m_sb.End();
             base.Draw(gameTime);
         }

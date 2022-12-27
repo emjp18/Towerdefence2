@@ -10,6 +10,18 @@ namespace Towerdefence
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         GameManager m_gameManager;
+        static int m_resolutionX = 1920;
+        static int m_resolutionY = 1080;
+        public static int resolutionX
+        {
+            get { return m_resolutionX; }
+
+        }
+        public static int resolutionY
+        {
+            get { return m_resolutionY; }
+
+        }
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -20,8 +32,8 @@ namespace Towerdefence
         protected override void Initialize()
         {
             m_gameManager = new GameManager(this);
-            _graphics.PreferredBackBufferWidth = 1920;
-            _graphics.PreferredBackBufferHeight = 1080;
+            _graphics.PreferredBackBufferWidth = m_resolutionX;
+            _graphics.PreferredBackBufferHeight = m_resolutionY;
             _graphics.ApplyChanges();
             Components.Add(m_gameManager.rendermanager);
             Components.Add(m_gameManager.levelmanager);

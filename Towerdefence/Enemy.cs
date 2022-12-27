@@ -31,7 +31,7 @@ namespace Towerdefence
             {
                 m_spriteeffects = SpriteEffects.FlipHorizontally;
             }
-            obb.center.Y += obb.size.Y*0.5f;
+            obb.center.Y -= obb.size.Y*0.5f;
             m_healthsourcerect = GetSourceRectangle();
             m_healthsourcerect.Height /= 4;
             obb.size.Y /= 4;
@@ -43,7 +43,7 @@ namespace Towerdefence
             if (m_health > 0)
             {
                 Vector2 heatlhBarPos = obb.center;
-                heatlhBarPos.Y += obb.size.Y * 0.5f;
+                heatlhBarPos.Y -= obb.size.Y * 0.5f;
                 m_healthbar.SetPosition(heatlhBarPos);
                 m_healthbar.Update(dt);
                 float percentageofhealth = m_healthsourcerect.X;

@@ -11,7 +11,7 @@ namespace Towerdefence
     {
         static SimplePath m_pathLeft;
         static SimplePath m_pathRight;
-        static Camera m_camera;
+        static Camera m_camera = new Camera();
         static Dictionary<string, Texture2D> m_textures = new Dictionary<string, Texture2D>();
         public static SimplePath pathLeft
         {
@@ -23,7 +23,11 @@ namespace Towerdefence
             get { return m_pathRight; }
             set { m_pathRight = value; }
         }
-        public static Camera GetCamera() { return m_camera; }
+        public static ref Camera camera
+        {
+            get { return ref m_camera; }
+            
+        }
         static List<GameObject> m_objects = new List<GameObject>();
         public static ref Dictionary<string, Texture2D> GetSetAllTextures() { return ref m_textures; }
         public static ref List<GameObject> GetSetAllObjects() { return ref m_objects; }
