@@ -13,8 +13,8 @@ namespace Towerdefence
     {
         Timer m_dayNightCycle=new Timer();
         OBB m_obb = new OBB();
-        double m_dayTime = 5*60;
-        double m_nightTime = 3*60;
+        double m_dayTime = 10;
+        double m_nightTime = 30;
         Vector2 m_celestialObjectPos = new Vector2(1856, 125);
         float m_celestialSpeed;
         bool m_day = true;
@@ -22,15 +22,15 @@ namespace Towerdefence
         Timer m_enemytoughTimer = new Timer();
         double m_enemyspawn = 5;
         Vector2 m_camPos;
-        float m_camSpeed = 500;
+        float m_camSpeed = 750;
         Random m_random= new Random();
         float m_pathwidth = 100;
         int money = 1000;
-        Vector2 m_mtv = Vector2.Zero;
         Timer m_buyTimer = new Timer();
+        bool m_gameover = false;
         public LevelManager(Game game) : base(game)
         {
-            m_dayNightCycle.ResetAndStart(m_nightTime);
+            m_dayNightCycle.ResetAndStart(m_dayTime);
             m_celestialSpeed = m_celestialObjectPos.X / (float)m_dayTime;
             m_enemySpawnTimer.ResetAndStart(m_enemyspawn);
             m_enemytoughTimer.ResetAndStart(m_enemyspawn * 2);
@@ -198,11 +198,19 @@ namespace Towerdefence
                         ResourceManager.camera.Transform(m_camPos);
                         foreach (GameObject obj in ResourceManager.GetSetAllObjects())
                         {
-
-                           
-
-                            if(obj is Enemy)
+                            if (obj is Tower)
                             {
+                                (obj as Tower).night = !m_day;
+                            }
+
+
+                            if (obj is Enemy)
+                            {
+                                if(obj.GetDestinationRectangle().Location.Y>1080)
+                                {
+                                    m_gameover = true;
+                                }
+
                                if(obj.texName=="whitemonster")
                                 {
                                     for (int i = 0; i < 5; i++)
@@ -296,6 +304,7 @@ namespace Towerdefence
                                     m_celestialObjectPos = new Vector2(1856, 125);
                                     obj.texName = "moon";
                                     oldday = m_day;
+                                    m_celestialSpeed = m_celestialObjectPos.X / (float)m_nightTime;
 
                                 }
                                 else if(oldday!= m_day && m_day == true)
@@ -303,14 +312,15 @@ namespace Towerdefence
                                     obj.texName = "sun";
                                     m_celestialObjectPos = new Vector2(1856, 125);
                                     oldday = m_day;
+                                    m_celestialSpeed = m_celestialObjectPos.X / (float)m_dayTime;
                                 }
                                 obj.SetPosition(m_celestialObjectPos);
                             }
 
 
                            
-
-                            obj.Update((float)dt);
+                            if(!m_day||obj is not Enemy)
+                                obj.Update((float)dt);
 
                         }
                         foreach (GameObject obj in ResourceManager.GetSetAllObjects())
@@ -324,7 +334,7 @@ namespace Towerdefence
                                 }
                             }
                         }
-                        if (m_day)
+                        if (!m_day)
                         {
                             if (m_enemySpawnTimer.IsDone())
                             {
@@ -346,6 +356,7 @@ namespace Towerdefence
                             }
 
                         }
+                        
                         break;
                     }
             }

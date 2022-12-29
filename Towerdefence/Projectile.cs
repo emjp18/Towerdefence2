@@ -10,9 +10,11 @@ namespace Towerdefence
 {
     internal class Projectile : DynamicObject
     {
-        Enemy m_target;
-        Vector2 m_center;
+   
+        
         bool m_foundTarget;
+        Vector2 m_shootDir;
+        public void SetShootdir(Vector2 dir) { m_shootDir = dir; }
         public bool FoundTarget
         {
             get { return m_foundTarget; }
@@ -20,39 +22,40 @@ namespace Towerdefence
         }
         public Projectile(OBB obb, string texname) : base(obb, texname)
         {
-            m_center = obb.center;
+         
             
         }
-        public Enemy Target
-        {
-            set { m_target = value; }
-        }
+       
         public override void Update(float dt)
         {
-            Vector2 dir = m_target.obb.center - m_obb.center;
-            if (PhysicsManager.SAT(m_target, this))
+            if(m_update)
             {
-                m_draw = false;
-                m_update = false;
-                m_target.health = m_target.health - 10;
-                m_obb.center = m_center;
+                if (texName == "star")
+                {
+                    if (m_shootDir != Vector2.Zero)
+                        m_shootDir.Normalize();
+                    AddForce(m_shootDir * m_speed * m_speed);
+
+                    AddTorque(m_r.X * m_shootDir.Y * m_speed - m_r.Y * m_shootDir.X * m_speed);
+                }
+                else
+                {
+
+                    AddForce(m_shootDir * m_speed * m_speed);
+
+                    AddTorque(m_r.X * m_shootDir.Y * m_speed - m_r.Y * m_shootDir.X * m_speed);
+                }
+
                 base.Update(dt);
-                return;
             }
             
-
-            dir.Normalize();
-            AddForce(dir*m_speed*m_speed);
-
-            AddTorque(m_r.X * dir.Y * m_speed - m_r.Y * dir.X * m_speed);
-
-            base.Update(dt);
         }
         public override void Draw(SpriteBatch sb)
         {
-            
+            if(m_draw)
+                base.Draw(sb);
 
-            base.Draw(sb);
+
         }
 
     }

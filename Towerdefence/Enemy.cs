@@ -31,8 +31,8 @@ namespace Towerdefence
             if (texName=="whitemonster")
             {
                 m_spriteeffects = SpriteEffects.FlipHorizontally;
-                m_health = 2;
-                m_speed = 1.5f;
+                m_health *= 2;
+                m_speed *= 1.5f;
             }
             obb.center.Y -= obb.size.Y*0.5f;
             m_healthsourcerect = GetSourceRectangle();
@@ -47,37 +47,46 @@ namespace Towerdefence
         }
         public override void Update(float dt)
         {
-            m_animationTimer.Update((double)dt);
-            if (m_health > 0)
+            if(m_update)
             {
-                Vector2 heatlhBarPos = obb.center;
-                heatlhBarPos.Y = obb.center.Y-obb.size.Y * 0.5f;
+                m_animationTimer.Update((double)dt);
+                if (m_health > 0)
+                {
+                    Vector2 heatlhBarPos = obb.center;
+                    heatlhBarPos.Y = obb.center.Y - obb.size.Y * 0.5f;
 
-                m_healthbar.SetPosition(heatlhBarPos);
-                OBB temp = m_healthbar.obb;
-                temp.size.X = m_health;
-                m_healthbar.obb = temp;
-                m_healthbar.Update(dt);
-         
-            }
-           
-            if (m_animationTimer.IsDone())
-            {
+                    m_healthbar.SetPosition(heatlhBarPos);
+                    OBB temp = m_healthbar.obb;
+                    temp.size.X = m_health;
+                    m_healthbar.obb = temp;
+                    m_healthbar.Update(dt);
 
-                if (m_sourcerect.X == m_sourcerect.Width)
-                    m_sourcerect.X = 0;
-                else
-                    m_sourcerect.X = m_sourcerect.Width;
-                m_animationTimer.ResetAndStart(m_secondsperFrame);
+                }
+
+                if (m_animationTimer.IsDone())
+                {
+
+                    if (m_sourcerect.X == m_sourcerect.Width)
+                        m_sourcerect.X = 0;
+                    else
+                        m_sourcerect.X = m_sourcerect.Width;
+                    m_animationTimer.ResetAndStart(m_secondsperFrame);
+                }
+                base.Update(dt);
             }
-            base.Update(dt);
+            
         }
         public override void Draw(SpriteBatch sb)
         {
+            if(m_draw)
+            {
+                sb.Draw(ResourceManager.GetSetAllTextures()[m_texName], GetDestinationRectangle(), m_sourcerect, 
+                    m_color, m_obb.orientation, m_obb.size * 0.5f, m_spriteeffects, 0);
+                if (m_health > 0)
+                    sb.Draw(ResourceManager.GetSetAllTextures()[m_healthbar.texName], m_healthbar.GetDestinationRectangle(),
+                        m_healthsourcerect, m_healthbar.color, m_healthbar.obb.orientation, m_healthbar.obb.size * 0.5f, m_healthbar.effect, 0);
+            }
             
-            sb.Draw(ResourceManager.GetSetAllTextures()[m_texName], GetDestinationRectangle(), m_sourcerect, m_color, m_obb.orientation, m_obb.size * 0.5f, m_spriteeffects, 0);
-            if(m_health>0)
-                sb.Draw(ResourceManager.GetSetAllTextures()[m_healthbar.texName], m_healthbar.GetDestinationRectangle(), m_healthsourcerect, m_healthbar.color, m_healthbar.obb.orientation, m_healthbar.obb.size*0.5f, m_healthbar.effect, 0);
         }
     }
 }

@@ -46,19 +46,25 @@ namespace Towerdefence
         }
         public override void Update(float dt)
         {
-            m_force /= mass;
-            m_force *= dt;
-            m_obb.center += m_force * dt;
-            float angularAcceleration = m_torque / m_inertia;
-            m_angularVelocity += angularAcceleration * dt;
-            m_obb.orientation += m_angularVelocity * dt;
-            m_force = Vector2.Zero;
-            m_torque = 0;
-            base.Update(dt);
+            if(m_update)
+            {
+                m_force /= mass;
+                m_force *= dt;
+                m_obb.center += m_force * dt;
+                float angularAcceleration = m_torque / m_inertia;
+                m_angularVelocity += angularAcceleration * dt;
+                m_obb.orientation += m_angularVelocity * dt;
+                m_force = Vector2.Zero;
+                m_torque = 0;
+                base.Update(dt);
+            }
+            
         }
         public override void Draw(SpriteBatch sb)
         {
-            sb.Draw(ResourceManager.GetSetAllTextures()[m_texName], GetDestinationRectangle(), GetSourceRectangle(),m_color, m_obb.orientation, m_obb.size * 0.5f, m_spriteeffects, 0); 
+            if(m_draw)
+                sb.Draw(ResourceManager.GetSetAllTextures()[m_texName], GetDestinationRectangle(),
+                    GetSourceRectangle(),m_color, m_obb.orientation, m_obb.size * 0.5f, m_spriteeffects, 0); 
         }
 
         

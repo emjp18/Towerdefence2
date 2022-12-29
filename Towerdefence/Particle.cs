@@ -25,18 +25,22 @@ namespace Towerdefence
 
         public override void Draw(SpriteBatch sb)
         {
-            sb.Draw(ResourceManager.GetSetAllTextures()[m_texName], GetDestinationRectangle(), m_color);
+            if(m_draw)
+                sb.Draw(ResourceManager.GetSetAllTextures()[m_texName], GetDestinationRectangle(), m_color);
         }
 
         public override void Update(float dt)
         {
-           
+           if(m_update)
+            {
+                m_pos = PhysicsManager.TransformVector2x2(PhysicsManager.GetRotationMatrix2x2(m_speed * dt), m_pos);
 
-            m_pos = PhysicsManager.TransformVector2x2(PhysicsManager.GetRotationMatrix2x2(m_speed*dt), m_pos);
+                SetPosition(m_pos + m_obb.center);
+                m_timer.Update((double)dt);
+                base.Update(dt);
+            }
 
-            SetPosition(m_pos + m_obb.center);
-            m_timer.Update((double)dt);
-            base.Update(dt);
+            
         }
         public bool GetTimerDone()
         {
