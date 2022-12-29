@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using System.Xml.Linq;
+
 namespace Towerdefence
 {
     internal class Tower : GameObject
@@ -13,23 +15,39 @@ namespace Towerdefence
         int m_ammo = 10;
         Projectile[] m_projectiles;
         Timer m_shootTimer = new Timer();
-        double m_shootDelay = 2;
+        double m_shootDelay = 0.5;
+        Emitter[] m_particlesystem;
         public Tower(OBB obb, string texname) : base( obb, texname)
         {
             m_projectiles = new Projectile[m_ammo];
+            m_particlesystem = new Emitter[m_ammo];
             obb.size = new Vector2(1920 / 30, 1080 / 30);
-           for (int i=0; i<m_ammo; i++)
+            if(texname == "suntower"||texname == "moonTower")
             {
-                if (texName == "suntower")
-                    m_projectiles[i] = new Projectile(obb, "star");
-                else
-                    m_projectiles[i] = new Projectile(obb, "halfmoon");
+                for (int i = 0; i < m_ammo; i++)
+                {
+                    if (texName == "suntower")
+                        m_projectiles[i] = new Projectile(obb, "star");
+                    else
+                        m_projectiles[i] = new Projectile(obb, "halfmoon");
 
-                m_projectiles[i].draw = false;
-                m_projectiles[i].update = false;
-                m_projectiles[i].speed = 100;
+                    m_projectiles[i].draw = false;
+                    m_projectiles[i].update = false;
+                    m_projectiles[i].speed = 100;
+
+
+
+                    obb.size *= 0.25f;
+                    if (texName == "suntower")
+                        m_particlesystem[i] = new Emitter(obb, "star");
+                    else
+                        m_particlesystem[i] = new Emitter(obb, "halfmoon");
+
+                    obb.size *= 4;
+                }
+                m_shootTimer.ResetAndStart(m_shootDelay);
             }
-            m_shootTimer.ResetAndStart(m_shootDelay);
+           
         }
       
         public float range
@@ -39,52 +57,78 @@ namespace Towerdefence
         }
         public override void Update(float dt)
         {
-            m_shootTimer.Update((double)dt);
-            foreach (GameObject obj in ResourceManager.GetSetAllObjects())
+            if (m_texName == "suntower" || m_texName == "moonTower")
             {
-                if ( obj is Enemy)
+                m_shootTimer.Update((double)dt);
+                foreach (GameObject obj in ResourceManager.GetSetAllObjects())
                 {
-                    for (int i = 0; i < m_ammo; i++)
+                    if (obj is Enemy)
                     {
-                        if(m_projectiles[i].update==false)
+                        for (int i = 0; i < m_ammo; i++)
                         {
-                            if ((obj.obb.center - m_obb.center).Length() < m_range &&m_shootTimer.IsDone())
+                            if (m_projectiles[i].update == false)
                             {
-                                m_projectiles[i].Target = obj as Enemy;
-                                m_projectiles[i].draw = true;
-                                m_projectiles[i].update = true;
-                                m_shootTimer.ResetAndStart(m_shootDelay);
+
+                                if ((obj.obb.center - m_obb.center).Length() < m_range && m_shootTimer.IsDone())
+                                {
+                                    m_projectiles[i].Target = obj as Enemy;
+                                    m_particlesystem[i].SetPosition(obj.obb.center);
+                                    m_projectiles[i].draw = true;
+                                    m_projectiles[i].update = true;
+                                    m_shootTimer.ResetAndStart(m_shootDelay);
+                                    m_projectiles[i].FoundTarget = true;
+                                }
                             }
+                            if (m_projectiles[i].FoundTarget)
+                            {
+                                m_particlesystem[i].draw = true;
+                                m_particlesystem[i].Update(dt);
+                                
+                            }
+                            else
+                            {
+                                m_particlesystem[i].draw = false;
+                            }
+                            if (m_particlesystem[i].GetTimerDone())
+                            {
+                                m_projectiles[i].FoundTarget = false;
+                                m_particlesystem[i].ResetTimer();
+                            }
+                                
                         }
-                       
                     }
-                }
-                    
 
-                
-            }
-            for (int i = 0; i < m_ammo; i++)
-            {
-                if (m_projectiles[i].update == true)
+
+
+                }
+                for (int i = 0; i < m_ammo; i++)
                 {
-                    m_projectiles[i].Update(dt);
-                }
+                    if (m_projectiles[i].update == true)
+                    {
+                        m_projectiles[i].Update(dt);
+                    }
 
+                }
             }
+                
 
             base.Update(dt);
         }
         public override void Draw(SpriteBatch sb)
         {
             sb.Draw(ResourceManager.GetSetAllTextures()[m_texName], GetDestinationRectangle(), m_color);
-            for (int i = 0; i < m_ammo; i++)
+            if (m_texName == "suntower" || m_texName == "moonTower")
             {
-               if(m_projectiles[i].draw)
+                for (int i = 0; i < m_ammo; i++)
                 {
-                    m_projectiles[i].Draw(sb);
+                    if (m_projectiles[i].draw)
+                        m_projectiles[i].Draw(sb);
+                    if (m_particlesystem[i].draw)
+                        m_particlesystem[i].Draw(sb);
+                    
                 }
-               
             }
+               
 
         }
 

@@ -31,6 +31,8 @@ namespace Towerdefence
             if (texName=="whitemonster")
             {
                 m_spriteeffects = SpriteEffects.FlipHorizontally;
+                m_health = 2;
+                m_speed = 1.5f;
             }
             obb.center.Y -= obb.size.Y*0.5f;
             m_healthsourcerect = GetSourceRectangle();
@@ -49,7 +51,7 @@ namespace Towerdefence
             if (m_health > 0)
             {
                 Vector2 heatlhBarPos = obb.center;
-                heatlhBarPos.Y -= obb.size.Y * 0.5f;
+                heatlhBarPos.Y = obb.center.Y-obb.size.Y * 0.5f;
 
                 m_healthbar.SetPosition(heatlhBarPos);
                 OBB temp = m_healthbar.obb;

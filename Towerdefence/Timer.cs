@@ -8,18 +8,19 @@ namespace Towerdefence
 {
     internal class Timer
     {
-        private double currentTime = 0.0;
+        private double m_currentTime = 0.0;
         public void ResetAndStart(double delay)
         {
-            currentTime = delay;
+            m_currentTime = delay;
         }
         public bool IsDone()
         {
-            return currentTime <= 0.0;
+            return m_currentTime <= 0.0;
         }
         public void Update(double deltaTime)
         {
-            currentTime -= deltaTime;
+            m_currentTime -= deltaTime;
         }
+        public double GetTime() { return m_currentTime; }
     }
 }

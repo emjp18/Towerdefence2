@@ -198,6 +198,9 @@ namespace Towerdefence
                         ResourceManager.camera.Transform(m_camPos);
                         foreach (GameObject obj in ResourceManager.GetSetAllObjects())
                         {
+
+                           
+
                             if(obj is Enemy)
                             {
                                if(obj.texName=="whitemonster")

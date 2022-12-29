@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +12,16 @@ namespace Towerdefence
     {
         Enemy m_target;
         Vector2 m_center;
+        bool m_foundTarget;
+        public bool FoundTarget
+        {
+            get { return m_foundTarget; }
+            set { m_foundTarget = value; }
+        }
         public Projectile(OBB obb, string texname) : base(obb, texname)
         {
             m_center = obb.center;
+            
         }
         public Enemy Target
         {
@@ -28,9 +36,10 @@ namespace Towerdefence
                 m_update = false;
                 m_target.health = m_target.health - 10;
                 m_obb.center = m_center;
+                base.Update(dt);
                 return;
             }
-
+            
 
             dir.Normalize();
             AddForce(dir*m_speed*m_speed);
@@ -39,5 +48,12 @@ namespace Towerdefence
 
             base.Update(dt);
         }
+        public override void Draw(SpriteBatch sb)
+        {
+            
+
+            base.Draw(sb);
+        }
+
     }
 }
