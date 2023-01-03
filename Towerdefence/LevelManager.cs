@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Spline;
 using System.Runtime.Remoting;
-
 namespace Towerdefence
 {
     internal class LevelManager : DrawableGameComponent
@@ -25,9 +24,38 @@ namespace Towerdefence
         float m_camSpeed = 750;
         Random m_random= new Random();
         float m_pathwidth = 100;
-        int money = 1000;
+        int m_money = 1000;
         Timer m_buyTimer = new Timer();
         bool m_gameover = false;
+        int m_moneyspent = 0;
+        int m_whitemonsterskilled = 0;
+        int m_darkmonterskilled = 0;
+        int m_days = 1;
+        float m_enemySpeedBoost = 0;
+        public bool gameover
+        {
+            get { return m_gameover; }
+        }
+        public int currentmoney
+        {
+            get { return m_money; }
+        }
+        public int spentmoney
+        {
+            get { return m_moneyspent; }
+        }
+        public int whitemonsterskilled
+        {
+            get { return m_whitemonsterskilled; }
+        }
+        public int darkmonsterskilled
+        {
+            get { return m_darkmonterskilled; }
+        }
+        public int days
+        {
+            get { return m_days; }
+        }
         public LevelManager(Game game) : base(game)
         {
             m_dayNightCycle.ResetAndStart(m_dayTime);
@@ -74,6 +102,11 @@ namespace Towerdefence
         {
             switch(GameManager.state)
             {
+                case GAME_STATE.MENU:
+                    {
+
+                        break;
+                    }
                 case GAME_STATE.EDITOR:
                     {
                         //if(KeyMouseReader.KeyPressed(Microsoft.Xna.Framework.Input.Keys.E))
@@ -104,15 +137,20 @@ namespace Towerdefence
                     }
                 case GAME_STATE.GAME:
                     {
-                        
+                       
                         bool oldday = m_day;
                         double dt = gametime.ElapsedGameTime.TotalSeconds;
-                        m_celestialObjectPos.X -= (float)dt * m_celestialSpeed;
-                        m_dayNightCycle.Update(dt);
-                        m_enemySpawnTimer.Update(dt);
-                        m_enemytoughTimer.Update(dt);
-                        m_buyTimer.Update(dt);
-                        m_day = oldday;
+                        if (!GameManager.pause)
+                        {
+                            m_celestialObjectPos.X -= (float)dt * m_celestialSpeed;
+                            m_dayNightCycle.Update(dt);
+                            m_enemySpawnTimer.Update(dt);
+                            m_enemytoughTimer.Update(dt);
+                            m_buyTimer.Update(dt);
+                            m_day = oldday;
+                        }
+                       
+                       
 
                         Vector3 cameratranslation = ResourceManager.camera.MV.Translation;
                         Vector2 mouseP = new Vector2(-(int)cameratranslation.X / 2, -(int)cameratranslation.Y / 2) 
@@ -122,7 +160,7 @@ namespace Towerdefence
 
 
 
-                        if (KeyMouseReader.LeftClick()&& !WithinPath(mouseP.ToPoint()) &&m_day&&money>=100 && mouseP.Y < 900)
+                        if (KeyMouseReader.LeftClick()&& !WithinPath(mouseP.ToPoint()) &&m_day&& m_money >= 100 && mouseP.Y < 900)
                         {
                             
                             m_obb.size = new Vector2(120.0f, 67.0f);
@@ -138,6 +176,8 @@ namespace Towerdefence
                                     {
                                         collidingwithtower = true;
                                         ResourceManager.GetSetAllObjects().Remove(obj);
+                                        m_money += 100;
+                                        m_moneyspent -= 100;
                                         break;
                                     }
                                 }
@@ -145,12 +185,13 @@ namespace Towerdefence
                             if(!collidingwithtower)
                             {
                                 ResourceManager.AddObject(t);
-                                money -= 100;
+                               m_money -= 100;
+                               m_moneyspent += 100;
                             }
                           
 
                         }
-                        if (KeyMouseReader.RightClick() && !WithinPath(mouseP.ToPoint()) && m_day && money >= 100 && mouseP.Y < 900)
+                        if (KeyMouseReader.RightClick() && !WithinPath(mouseP.ToPoint()) && m_day && m_money >= 100 && mouseP.Y < 900)
                         {
                            
                             m_obb.size = new Vector2(120.0f, 67.0f);
@@ -166,6 +207,8 @@ namespace Towerdefence
                                     {
                                         collidingwithtower = true;
                                         ResourceManager.GetSetAllObjects().Remove(obj);
+                                        m_money += 100;
+                                        m_moneyspent -= 100;
                                         break;
                                     }
                                 }
@@ -173,7 +216,8 @@ namespace Towerdefence
                             if (!collidingwithtower)
                             {
                                 ResourceManager.AddObject(t);
-                                money -= 100;
+                                m_money -= 100;
+                                m_moneyspent += 100;
                             }
 
 
@@ -222,7 +266,7 @@ namespace Towerdefence
                                         {
                                             Vector2 dir = pos2 - pos1;
                                             dir.Normalize();
-                                            (obj as Enemy).AddForce(dir*(obj as Enemy).speed);
+                                            (obj as Enemy).AddForce(dir*((obj as Enemy).speed+ m_enemySpeedBoost));
                                             break;
                                         }
                                         else if (obj.obb.center.Y > pos1.Y
@@ -230,7 +274,7 @@ namespace Towerdefence
                                         {
                                             Vector2 dir = pos2 - pos1;
                                             dir.Normalize();
-                                            (obj as Enemy).AddForce(dir*(obj as Enemy).speed);
+                                            (obj as Enemy).AddForce(dir* ((obj as Enemy).speed + m_enemySpeedBoost));
                                             break;
                                         }
                                         else if (
@@ -295,6 +339,8 @@ namespace Towerdefence
                                     m_dayNightCycle.ResetAndStart(m_dayTime);
                                     obj.texName = "day";
                                     m_day = true;
+                                    m_days++;
+                                    m_enemySpeedBoost += 2;
                                 }
                             }
                             if (obj.texName =="sun"||obj.texName=="moon")
@@ -317,10 +363,13 @@ namespace Towerdefence
                                 obj.SetPosition(m_celestialObjectPos);
                             }
 
-
+                            if(!GameManager.pause)
+                            {
+                                if (!m_day || obj is not Enemy)
+                                    obj.Update((float)dt);
+                            }
                            
-                            if(!m_day||obj is not Enemy)
-                                obj.Update((float)dt);
+                            
 
                         }
                         foreach (GameObject obj in ResourceManager.GetSetAllObjects())
@@ -330,6 +379,15 @@ namespace Towerdefence
                                 if((obj as Enemy).health<=0)
                                 {
                                     ResourceManager.GetSetAllObjects().Remove(obj);
+                                    if(obj.texName=="whitemonster")
+                                    {
+                                        m_whitemonsterskilled++;
+                                    }
+                                    else
+                                    {
+                                        m_darkmonterskilled++;
+                                    }
+                                    m_money += 10;
                                     break;
                                 }
                             }

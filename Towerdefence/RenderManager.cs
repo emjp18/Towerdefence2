@@ -20,6 +20,7 @@ namespace Towerdefence
         Texture2D m_cursorTex;
         Rectangle m_destRenderTargetRectangle;
         RenderTarget2D m_rendertarget;
+
         public RenderManager(Game game) : base(game)
         {
             m_sb = new SpriteBatch(Game.GraphicsDevice);
@@ -37,6 +38,8 @@ namespace Towerdefence
             m_textures.Add("day");
             m_textures.Add("night");
             m_textures.Add("health");
+            m_textures.Add("menu");
+            m_textures.Add("menuText");
             m_enmypath1 = new SimplePath(game.GraphicsDevice);
             m_enemypath2 = new SimplePath(game.GraphicsDevice);
             m_enmypath1.Clean();
@@ -91,37 +94,57 @@ namespace Towerdefence
         public override void Draw(GameTime gameTime)
         {
             
-            Game.GraphicsDevice.SetRenderTarget(m_rendertarget);
-            Game.GraphicsDevice.Clear(Color.AliceBlue);
-            m_sb.Begin();
-            foreach (GameObject obj in ResourceManager.GetSetAllObjects())
+            switch(GameManager.state)
             {
-                obj.Draw(m_sb);
+                case GAME_STATE.MENU:
+                    {
+                        m_sb.Begin();
+                        m_sb.Draw(ResourceManager.GetSetAllTextures()["menu"], Vector2.Zero, Color.White);
+                        m_sb.End();
+                        break;
+                    }
+                case GAME_STATE.GAME:
+                    {
+                        Game.GraphicsDevice.SetRenderTarget(m_rendertarget);
+                        Game.GraphicsDevice.Clear(Color.AliceBlue);
+                        m_sb.Begin();
+                        foreach (GameObject obj in ResourceManager.GetSetAllObjects())
+                        {
+                            obj.Draw(m_sb);
 
 
 
 
+                        }
+                        m_sb.End();
+                        Game.GraphicsDevice.SetRenderTarget(null);
+                        Game.GraphicsDevice.Clear(Color.AliceBlue);
+                        m_sb.Begin(SpriteSortMode.Deferred, null, null, null, null, null,
+                             ResourceManager.camera.MV);
+                        foreach (GameObject obj in ResourceManager.GetSetAllObjects())
+                        {
+                            obj.Draw(m_sb);
+
+
+
+
+                        }
+                        Vector3 t = ResourceManager.camera.MV.Translation;
+                        m_destRenderTargetRectangle.Location = new Point(-(int)t.X / 2, -(int)t.Y / 2);
+
+                        m_sb.Draw(m_rendertarget, m_destRenderTargetRectangle, Color.White);
+                        if(!GameManager.pause)
+                            m_sb.Draw(m_cursorTex, new Vector2(-(int)t.X / 2, -(int)t.Y / 2) + KeyMouseReader.mouseState.Position.ToVector2()
+                            * 0.5f - new Vector2(
+                            m_cursorTex.Width, m_cursorTex.Height) * 0.5f, Color.White);
+                        m_sb.End();
+                        break;
+                    }
+                    
             }
-            m_sb.End();
-            Game.GraphicsDevice.SetRenderTarget(null);
-            Game.GraphicsDevice.Clear(Color.AliceBlue);
-            m_sb.Begin(SpriteSortMode.Deferred, null, null, null, null, null,
-                 ResourceManager.camera.MV);
-            foreach (GameObject obj in ResourceManager.GetSetAllObjects())
-            {
-                obj.Draw(m_sb);
 
 
-
-
-            }
-            Vector3 t= ResourceManager.camera.MV.Translation;
-            m_destRenderTargetRectangle.Location = new Point(-(int)t.X/2, -(int)t.Y/2);
-       
-            m_sb.Draw(m_rendertarget, m_destRenderTargetRectangle, Color.White);
-            m_sb.Draw(m_cursorTex, new Vector2(-(int)t.X / 2, -(int)t.Y / 2) + KeyMouseReader.mouseState.Position.ToVector2() * 0.5f - new Vector2(
-                m_cursorTex.Width, m_cursorTex.Height)*0.5f, Color.White);
-            m_sb.End();
+            
             base.Draw(gameTime);
         }
         

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-
+using System.Windows.Forms;
 
 namespace Towerdefence
 {
@@ -12,6 +12,8 @@ namespace Towerdefence
         GameManager m_gameManager;
         static int m_resolutionX = 1920;
         static int m_resolutionY = 1080;
+
+        
         public static int resolutionX
         {
             get { return m_resolutionX; }
@@ -37,6 +39,8 @@ namespace Towerdefence
             _graphics.ApplyChanges();
             Components.Add(m_gameManager.rendermanager);
             Components.Add(m_gameManager.levelmanager);
+            Components.Add(m_gameManager.controls);
+
             base.Initialize();
         }
 
@@ -49,12 +53,13 @@ namespace Towerdefence
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-            {
-                //m_gameManager.filemanager.WriteToFile("scene", ResourceManager.GetSetAllObjects());
+
+            if (GameManager.state == GAME_STATE.GAME&& !GameManager.pause)
+                IsMouseVisible = false;
+            else
+                IsMouseVisible = true;
+            if (GameManager.state == GAME_STATE.EXIT)
                 Exit();
-            }
-               
 
             m_gameManager.GameLoop();
 
