@@ -19,12 +19,12 @@ namespace Towerdefence
         bool m_day = true;
         Timer m_enemySpawnTimer = new Timer();
         Timer m_enemytoughTimer = new Timer();
-        double m_enemyspawn = 5;
+        double m_enemyspawn = 2.5;
         Vector2 m_camPos;
         float m_camSpeed = 750;
         Random m_random= new Random();
         float m_pathwidth = 100;
-        int m_money = 1000;
+        int m_money = 200;
         Timer m_buyTimer = new Timer();
         bool m_gameover = false;
         int m_moneyspent = 0;
@@ -109,12 +109,7 @@ namespace Towerdefence
                     }
                 case GAME_STATE.EDITOR:
                     {
-                        //if(KeyMouseReader.KeyPressed(Microsoft.Xna.Framework.Input.Keys.E))
-                        //{
-                        //    m_obb.center = KeyMouseReader.mouseState.Position.ToVector2();
-                        //    m_obb.size = new Vector2(240.0f, 135.0f);
-                        //    ResourceManager.AddObject(new Tower(m_obb, "wall"));
-                        //}
+                        
                         foreach (GameObject obj in ResourceManager.GetSetAllObjects())
                         {
                             float dt = (float)gametime.ElapsedGameTime.TotalSeconds;
@@ -266,7 +261,7 @@ namespace Towerdefence
                                         {
                                             Vector2 dir = pos2 - pos1;
                                             dir.Normalize();
-                                            (obj as Enemy).AddForce(dir*((obj as Enemy).speed+ m_enemySpeedBoost));
+                                            (obj as Enemy).AddForce(dir*((obj as Enemy).speed* m_enemySpeedBoost));
                                             break;
                                         }
                                         else if (obj.obb.center.Y > pos1.Y
@@ -274,7 +269,7 @@ namespace Towerdefence
                                         {
                                             Vector2 dir = pos2 - pos1;
                                             dir.Normalize();
-                                            (obj as Enemy).AddForce(dir* ((obj as Enemy).speed + m_enemySpeedBoost));
+                                            (obj as Enemy).AddForce(dir* ((obj as Enemy).speed * m_enemySpeedBoost));
                                             break;
                                         }
                                         else if (
@@ -298,7 +293,7 @@ namespace Towerdefence
                                         {
                                             Vector2 dir = pos2 - pos1;
                                             dir.Normalize();
-                                            (obj as Enemy).AddForce(dir*(obj as Enemy).speed);
+                                            (obj as Enemy).AddForce(dir*(obj as Enemy).speed * m_enemySpeedBoost);
                                             break;
                                         }
                                         else if (obj.obb.center.Y > pos1.Y
@@ -306,7 +301,7 @@ namespace Towerdefence
                                         {
                                             Vector2 dir = pos2 - pos1;
                                             dir.Normalize();
-                                            (obj as Enemy).AddForce(dir*(obj as Enemy).speed);
+                                            (obj as Enemy).AddForce(dir*(obj as Enemy).speed * m_enemySpeedBoost);
                                             break;
                                         }
                                         else if (
@@ -340,7 +335,7 @@ namespace Towerdefence
                                     obj.texName = "day";
                                     m_day = true;
                                     m_days++;
-                                    m_enemySpeedBoost += 2;
+                                    m_enemySpeedBoost += 1;
                                 }
                             }
                             if (obj.texName =="sun"||obj.texName=="moon")

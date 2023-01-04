@@ -11,6 +11,8 @@ namespace Towerdefence
 {
     internal class Tower : GameObject
     {
+        float m_damageSunTower = 2.5f;
+        float m_damageMoonTower = 3;
         float m_range = 300;
         int m_ammo = 10;
         Projectile[] m_projectiles;
@@ -93,7 +95,7 @@ namespace Towerdefence
                                         m_projectiles[i].update = false;
                                         
                                         
-                                        (obj as Enemy).health = (obj as Enemy).health - 10;
+                                        (obj as Enemy).health = (obj as Enemy).health - m_damageSunTower;
 
                                         m_particlesystem[i].draw = true;
                                         m_particlesystem[i].update = true;
@@ -180,7 +182,7 @@ namespace Towerdefence
                                           
                                             if (PhysicsManager.SAT(obj, m_projectiles[i]))
                                             {
-                                                (obj as Enemy).health = (obj as Enemy).health - 10;
+                                                (obj as Enemy).health = (obj as Enemy).health - m_damageMoonTower;
                                                 m_projectiles[i].SetPosition(m_obb.center);
                                                 m_projectiles[i].Update(dt);
                                                 m_projectiles[i].update = false;

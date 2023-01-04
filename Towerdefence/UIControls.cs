@@ -17,6 +17,7 @@ namespace Towerdefence
         string m_currentincome = "";
         string m_surviveddays = "";
         string m_moneySpent = "";
+        string[] m_labels = new string[5];
         Button m_playBtn;
         Button m_quitBtn;
         TextArea m_textArea1;
@@ -50,11 +51,28 @@ namespace Towerdefence
         {
         }
         public void AddMenu() { Controls.Add(m_form1); }
-        public void AddPauseMenu() { Controls.Add(m_form2); }
+        public void AddPauseMenu() {
+
+            m_labels[0] = "White monsters slayn: " + m_whitemonsterskilled;
+            m_labels[1] = "Dark monsters slayn: " + m_darkmonsterskilled;
+            m_labels[2] = "Money Spent: " + m_moneySpent;
+            m_labels[3] = "Days survived: " + m_surviveddays;
+            m_labels[4] = "Current Income: " + m_currentincome;
+            int i = 0;
+            foreach ( Control c in m_controls2)
+            {
+                if(c is Label)
+                {
+                    (c as Label).Text = m_labels[i++];
+                }
+            }
+            
+            Controls.Add(m_form2); }
         public void RemoveMenu() { Controls.Remove(m_form1); }
         public void RemovePauseMenu() { Controls.Remove(m_form2); }
         public override void InitializeComponent()
         {
+            
             m_controls = new List<Control>();
             m_form1 = GetForm("", new Vector2(300, 100));
 

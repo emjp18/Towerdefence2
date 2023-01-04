@@ -107,7 +107,7 @@ namespace Towerdefence
                 m_gameover = true;
                 m_controls.AddPauseMenu();
             }
-            if (KeyMouseReader.KeyPressed(Microsoft.Xna.Framework.Input.Keys.Escape)&&!m_levelManager.gameover)
+            if (KeyMouseReader.KeyPressed(Microsoft.Xna.Framework.Input.Keys.Escape)&&!m_levelManager.gameover&&m_state==GAME_STATE.GAME)
             {
                 m_pause = !m_pause;
                 if(m_pause)
