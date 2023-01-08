@@ -12,7 +12,7 @@ namespace Towerdefence
     {
         Timer m_dayNightCycle=new Timer();
         OBB m_obb = new OBB();
-        double m_dayTime = 10;
+        double m_dayTime = 20;
         double m_nightTime = 30;
         Vector2 m_celestialObjectPos = new Vector2(1856, 125);
         float m_celestialSpeed;
@@ -31,7 +31,7 @@ namespace Towerdefence
         int m_whitemonsterskilled = 0;
         int m_darkmonterskilled = 0;
         int m_days = 1;
-        float m_enemySpeedBoost = 0;
+        float m_enemySpeedBoost = 5;
         public bool gameover
         {
             get { return m_gameover; }
@@ -155,7 +155,7 @@ namespace Towerdefence
 
 
 
-                        if (KeyMouseReader.LeftClick()&& !WithinPath(mouseP.ToPoint()) &&m_day&& m_money >= 100 && mouseP.Y < 900)
+                        if (KeyMouseReader.LeftClick()&& !WithinPath(mouseP.ToPoint()) &&m_day && mouseP.Y < 900)
                         {
                             
                             m_obb.size = new Vector2(120.0f, 67.0f);
@@ -171,22 +171,22 @@ namespace Towerdefence
                                     {
                                         collidingwithtower = true;
                                         ResourceManager.GetSetAllObjects().Remove(obj);
-                                        m_money += 100;
-                                        m_moneyspent -= 100;
+                                        m_money += 50;
+                                        m_moneyspent -= 50;
                                         break;
                                     }
                                 }
                             }
-                            if(!collidingwithtower)
+                            if(!collidingwithtower && m_money >= 50)
                             {
                                 ResourceManager.AddObject(t);
-                               m_money -= 100;
-                               m_moneyspent += 100;
+                               m_money -= 50;
+                               m_moneyspent += 50;
                             }
                           
 
                         }
-                        if (KeyMouseReader.RightClick() && !WithinPath(mouseP.ToPoint()) && m_day && m_money >= 100 && mouseP.Y < 900)
+                        if (KeyMouseReader.RightClick() && !WithinPath(mouseP.ToPoint()) && m_day  && mouseP.Y < 900)
                         {
                            
                             m_obb.size = new Vector2(120.0f, 67.0f);
@@ -208,7 +208,7 @@ namespace Towerdefence
                                     }
                                 }
                             }
-                            if (!collidingwithtower)
+                            if (!collidingwithtower && m_money >= 100)
                             {
                                 ResourceManager.AddObject(t);
                                 m_money -= 100;
@@ -245,7 +245,7 @@ namespace Towerdefence
 
                             if (obj is Enemy)
                             {
-                                if(obj.GetDestinationRectangle().Location.Y>1080)
+                                if(obj.GetDestinationRectangle().Location.Y>1000)
                                 {
                                     m_gameover = true;
                                 }
@@ -256,28 +256,39 @@ namespace Towerdefence
                                     {
                                         Vector2 pos1 = ResourceManager.pathRight.GetPos(i);
                                         Vector2 pos2 = ResourceManager.pathRight.GetPos(i + 1);
-                                        if (obj.obb.center.X > pos2.X
+
+                                        float d1 = pos2.Y - pos1.Y;
+                                        float d2 = pos2.X - pos1.X;
+                                        if(MathF.Abs(d2)>1)
+                                        {
+                                            if(obj.obb.center.X >= pos2.X
                                             && obj.obb.center.X <= pos1.X)
-                                        {
-                                            Vector2 dir = pos2 - pos1;
-                                            dir.Normalize();
-                                            (obj as Enemy).AddForce(dir*((obj as Enemy).speed* m_enemySpeedBoost));
-                                            break;
+                                            {
+                                                Vector2 dir = pos2 - pos1;
+                                                dir.Normalize();
+                                                (obj as Enemy).AddForce(dir * ((obj as Enemy).speed + m_enemySpeedBoost));
+                                                break;
+                                            }
+                                            
                                         }
-                                        else if (obj.obb.center.Y > pos1.Y
-                                            && obj.obb.center.Y < pos2.Y)
+                                        else
                                         {
-                                            Vector2 dir = pos2 - pos1;
-                                            dir.Normalize();
-                                            (obj as Enemy).AddForce(dir* ((obj as Enemy).speed * m_enemySpeedBoost));
-                                            break;
+                                            if (obj.obb.center.Y >= pos1.Y
+                                            && obj.obb.center.Y <= pos2.Y)
+                                            {
+                                                Vector2 dir = pos2 - pos1;
+                                                dir.Normalize();
+                                                (obj as Enemy).AddForce(dir * ((obj as Enemy).speed + m_enemySpeedBoost));
+                                                break;
+                                            }
                                         }
-                                        else if (
-                                          obj.obb.center.Y <= pos1.Y)
+                                      
+                                        if (
+                                          obj.obb.center.Y <= ResourceManager.pathRight.GetPos(0).Y)
                                         {
                                             obj.SetPosition(ResourceManager.pathRight.GetPos(0) + Vector2.UnitY * 10);
-
                                             break;
+
                                         }
 
                                     }
@@ -288,30 +299,41 @@ namespace Towerdefence
                                     {
                                         Vector2 pos1 = ResourceManager.pathLeft.GetPos(i);
                                         Vector2 pos2 = ResourceManager.pathLeft.GetPos(i + 1);
-                                        if (obj.obb.center.X >= pos1.X
-                                            && obj.obb.center.X < pos2.X)
+
+                                        float d1 = pos2.Y - pos1.Y;
+                                        float d2 = pos2.X - pos1.X;
+                                        if (MathF.Abs(d2) > 1)
                                         {
-                                            Vector2 dir = pos2 - pos1;
-                                            dir.Normalize();
-                                            (obj as Enemy).AddForce(dir*(obj as Enemy).speed * m_enemySpeedBoost);
-                                            break;
+                                            if (obj.obb.center.X >= pos1.X
+                                            && obj.obb.center.X <= pos2.X)
+                                            {
+                                                Vector2 dir = pos2 - pos1;
+                                                dir.Normalize();
+                                                (obj as Enemy).AddForce(dir * ((obj as Enemy).speed + m_enemySpeedBoost));
+                                                break;
+                                            }
+                                            
                                         }
-                                        else if (obj.obb.center.Y > pos1.Y
-                                            && obj.obb.center.Y < pos2.Y)
+                                        else
                                         {
-                                            Vector2 dir = pos2 - pos1;
-                                            dir.Normalize();
-                                            (obj as Enemy).AddForce(dir*(obj as Enemy).speed * m_enemySpeedBoost);
-                                            break;
+                                            if (obj.obb.center.Y >= pos1.Y
+                                            && obj.obb.center.Y <= pos2.Y)
+                                            {
+                                                Vector2 dir = pos2 - pos1;
+                                                dir.Normalize();
+                                                (obj as Enemy).AddForce(dir * ((obj as Enemy).speed + m_enemySpeedBoost));
+                                                break;
+                                            }
                                         }
-                                        else if (
-                                          obj.obb.center.Y <= pos1.Y)
+
+                                        if (
+                                          obj.obb.center.Y <= ResourceManager.pathLeft.GetPos(0).Y)
                                         {
                                             obj.SetPosition(ResourceManager.pathLeft.GetPos(0) + Vector2.UnitY * 10);
 
                                             break;
                                         }
-                                        
+
                                     }
                                 }
                                     
@@ -335,7 +357,7 @@ namespace Towerdefence
                                     obj.texName = "day";
                                     m_day = true;
                                     m_days++;
-                                    m_enemySpeedBoost += 1;
+                                    m_enemySpeedBoost += 10;
                                 }
                             }
                             if (obj.texName =="sun"||obj.texName=="moon")
@@ -394,7 +416,7 @@ namespace Towerdefence
                                 m_obb.center = ResourceManager.pathLeft.GetPos(0) + Vector2.UnitY * 10;
                                 m_obb.size = new Vector2(240, 60);
                                 GameObject go = new Enemy(m_obb, "blackmonster");
-                                (go as Enemy).speed = m_random.Next(500, 700);
+                                (go as Enemy).speed = m_random.Next(1000, 1400);
                                 ResourceManager.AddObject(go);
                                 m_enemySpawnTimer.ResetAndStart(m_enemyspawn);
                             }
@@ -403,7 +425,7 @@ namespace Towerdefence
                                 m_obb.center = ResourceManager.pathRight.GetPos(0) + Vector2.UnitY * 10;
                                 m_obb.size = new Vector2(240, 60);
                                 GameObject go = new Enemy(m_obb, "whitemonster");
-                                (go as Enemy).speed = m_random.Next(700, 900);
+                                (go as Enemy).speed = m_random.Next(1400, 1800);
                                 ResourceManager.AddObject(go);
                                 m_enemytoughTimer.ResetAndStart(m_enemyspawn * 2);
                             }
