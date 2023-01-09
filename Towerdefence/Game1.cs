@@ -40,7 +40,7 @@ namespace Towerdefence
             Components.Add(m_gameManager.rendermanager);
             Components.Add(m_gameManager.levelmanager);
             Components.Add(m_gameManager.controls);
-
+            Components.Add(m_gameManager.soundmanager);
             base.Initialize();
         }
 

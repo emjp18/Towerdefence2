@@ -10,6 +10,7 @@ namespace Towerdefence
     public enum GAME_STATE { MENU, GAME,EDITOR, EXIT};
     internal class GameManager
     {
+        SoundManager m_soundmanager;
         LevelManager m_levelManager;
         RenderManager m_renderManager;
         FileManager m_fileManager;
@@ -27,6 +28,11 @@ namespace Towerdefence
         public LevelManager levelmanager
         {
             get => m_levelManager;
+
+        }
+        public SoundManager soundmanager
+        {
+            get => m_soundmanager;
 
         }
         public RenderManager rendermanager
@@ -60,7 +66,7 @@ namespace Towerdefence
             m_renderManager= new RenderManager(game);
             m_fileManager = new FileManager("../../../");
             m_controls = new UIControls(game);
-
+            m_soundmanager = new SoundManager(game);
 
         }
         private void InputString()
@@ -107,6 +113,7 @@ namespace Towerdefence
                 m_gameover = true;
                 m_controls.AddPauseMenu();
                 m_pause = true;
+         
             }
             if (KeyMouseReader.KeyPressed(Microsoft.Xna.Framework.Input.Keys.Escape)&&!m_levelManager.gameover&&m_state==GAME_STATE.GAME)
             {

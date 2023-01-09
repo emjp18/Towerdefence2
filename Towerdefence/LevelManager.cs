@@ -151,72 +151,77 @@ namespace Towerdefence
                         Vector2 mouseP = new Vector2(-(int)cameratranslation.X / 2, -(int)cameratranslation.Y / 2) 
                             + KeyMouseReader.mouseState.Position.ToVector2() * 0.5f - new Vector2(
                 120, 120) * 0.5f;
-                       
 
-
-
-                        if (KeyMouseReader.LeftClick()&& !WithinPath(mouseP.ToPoint()) &&m_day && mouseP.Y < 900)
+                        if (!GameManager.pause)
                         {
-                            
-                            m_obb.size = new Vector2(120.0f, 67.0f);
-                            m_obb.center = mouseP + m_obb.size * 0.5f ;
-                            GameObject t = new Tower(m_obb, "suntower");
-                            t.Update((float)dt);
-                            bool collidingwithtower = false;
-                            foreach (GameObject obj in ResourceManager.GetSetAllObjects())
+
+                            if (KeyMouseReader.LeftClick() && !WithinPath(mouseP.ToPoint()) && m_day && mouseP.Y < 900)
                             {
-                                if(obj is Tower)
+
+                                m_obb.size = new Vector2(120.0f, 67.0f);
+                                m_obb.center = mouseP + m_obb.size * 0.5f;
+                                GameObject t = new Tower(m_obb, "suntower");
+                                t.Update((float)dt);
+                                bool collidingwithtower = false;
+                                foreach (GameObject obj in ResourceManager.GetSetAllObjects())
                                 {
-                                    if (PhysicsManager.SAT(obj, t))
+                                    if (obj is Tower)
                                     {
-                                        collidingwithtower = true;
-                                        ResourceManager.GetSetAllObjects().Remove(obj);
-                                        m_money += 50;
-                                        m_moneyspent -= 50;
-                                        break;
+                                        if (PhysicsManager.SAT(obj, t))
+                                        {
+                                            collidingwithtower = true;
+                                            ResourceManager.GetSetAllObjects().Remove(obj);
+                                            m_money += 50;
+                                            m_moneyspent -= 50;
+                                            break;
+                                        }
                                     }
                                 }
-                            }
-                            if(!collidingwithtower && m_money >= 50)
-                            {
-                                ResourceManager.AddObject(t);
-                               m_money -= 50;
-                               m_moneyspent += 50;
-                            }
-                          
-
-                        }
-                        if (KeyMouseReader.RightClick() && !WithinPath(mouseP.ToPoint()) && m_day  && mouseP.Y < 900)
-                        {
-                           
-                            m_obb.size = new Vector2(120.0f, 67.0f);
-                            m_obb.center = mouseP + m_obb.size * 0.5f;
-                            GameObject t = new Tower(m_obb, "moonTower");
-                            t.Update((float)dt);
-                            bool collidingwithtower = false;
-                            foreach (GameObject obj in ResourceManager.GetSetAllObjects())
-                            {
-                                if (obj is Tower)
+                                if (!collidingwithtower && m_money >= 50)
                                 {
-                                    if (PhysicsManager.SAT(obj, t))
+                                    ResourceManager.AddObject(t);
+                                    m_money -= 50;
+                                    m_moneyspent += 50;
+                                    SoundManager.Play(SOUND_FX.BUILD);
+                                }
+
+
+                            }
+                            if (KeyMouseReader.RightClick() && !WithinPath(mouseP.ToPoint()) && m_day && mouseP.Y < 900)
+                            {
+
+                                m_obb.size = new Vector2(120.0f, 67.0f);
+                                m_obb.center = mouseP + m_obb.size * 0.5f;
+                                GameObject t = new Tower(m_obb, "moonTower");
+                                t.Update((float)dt);
+                                bool collidingwithtower = false;
+                                foreach (GameObject obj in ResourceManager.GetSetAllObjects())
+                                {
+                                    if (obj is Tower)
                                     {
-                                        collidingwithtower = true;
-                                        ResourceManager.GetSetAllObjects().Remove(obj);
-                                        m_money += 100;
-                                        m_moneyspent -= 100;
-                                        break;
+                                        if (PhysicsManager.SAT(obj, t))
+                                        {
+                                            collidingwithtower = true;
+                                            ResourceManager.GetSetAllObjects().Remove(obj);
+                                            m_money += 100;
+                                            m_moneyspent -= 100;
+                                            break;
+                                        }
                                     }
                                 }
-                            }
-                            if (!collidingwithtower && m_money >= 100)
-                            {
-                                ResourceManager.AddObject(t);
-                                m_money -= 100;
-                                m_moneyspent += 100;
-                            }
+                                if (!collidingwithtower && m_money >= 100)
+                                {
+                                    ResourceManager.AddObject(t);
+                                    m_money -= 100;
+                                    m_moneyspent += 100;
+                                    SoundManager.Play(SOUND_FX.BUILD);
+                                }
 
 
+                            }
                         }
+
+
 
                         if (KeyMouseReader.KeyHeld(Microsoft.Xna.Framework.Input.Keys.Left))
                         {
@@ -235,202 +240,207 @@ namespace Towerdefence
                             m_camPos.Y += (float)dt * m_camSpeed;
                         }
                         ResourceManager.camera.Transform(m_camPos);
-                        foreach (GameObject obj in ResourceManager.GetSetAllObjects())
+
+                        if (!GameManager.pause)
                         {
-                            if (obj is Tower)
-                            {
-                                (obj as Tower).night = !m_day;
-                            }
-
-
-                            if (obj is Enemy)
-                            {
-                                if(obj.GetDestinationRectangle().Location.Y>1000)
-                                {
-                                    m_gameover = true;
-                                }
-
-                               if(obj.texName=="whitemonster")
-                                {
-                                    for (int i = 0; i < 5; i++)
-                                    {
-                                        Vector2 pos1 = ResourceManager.pathRight.GetPos(i);
-                                        Vector2 pos2 = ResourceManager.pathRight.GetPos(i + 1);
-
-                                        float d1 = pos2.Y - pos1.Y;
-                                        float d2 = pos2.X - pos1.X;
-                                        if(MathF.Abs(d2)>1)
-                                        {
-                                            if(obj.obb.center.X >= pos2.X
-                                            && obj.obb.center.X <= pos1.X)
-                                            {
-                                                Vector2 dir = pos2 - pos1;
-                                                dir.Normalize();
-                                                (obj as Enemy).AddForce(dir * ((obj as Enemy).speed + m_enemySpeedBoost));
-                                                break;
-                                            }
-                                            
-                                        }
-                                        else
-                                        {
-                                            if (obj.obb.center.Y >= pos1.Y
-                                            && obj.obb.center.Y <= pos2.Y)
-                                            {
-                                                Vector2 dir = pos2 - pos1;
-                                                dir.Normalize();
-                                                (obj as Enemy).AddForce(dir * ((obj as Enemy).speed + m_enemySpeedBoost));
-                                                break;
-                                            }
-                                        }
-                                      
-                                        if (
-                                          obj.obb.center.Y <= ResourceManager.pathRight.GetPos(0).Y)
-                                        {
-                                            obj.SetPosition(ResourceManager.pathRight.GetPos(0) + Vector2.UnitY * 10);
-                                            break;
-
-                                        }
-
-                                    }
-                                }
-                               else
-                                {
-                                    for (int i = 0; i < 5; i++)
-                                    {
-                                        Vector2 pos1 = ResourceManager.pathLeft.GetPos(i);
-                                        Vector2 pos2 = ResourceManager.pathLeft.GetPos(i + 1);
-
-                                        float d1 = pos2.Y - pos1.Y;
-                                        float d2 = pos2.X - pos1.X;
-                                        if (MathF.Abs(d2) > 1)
-                                        {
-                                            if (obj.obb.center.X >= pos1.X
-                                            && obj.obb.center.X <= pos2.X)
-                                            {
-                                                Vector2 dir = pos2 - pos1;
-                                                dir.Normalize();
-                                                (obj as Enemy).AddForce(dir * ((obj as Enemy).speed + m_enemySpeedBoost));
-                                                break;
-                                            }
-                                            
-                                        }
-                                        else
-                                        {
-                                            if (obj.obb.center.Y >= pos1.Y
-                                            && obj.obb.center.Y <= pos2.Y)
-                                            {
-                                                Vector2 dir = pos2 - pos1;
-                                                dir.Normalize();
-                                                (obj as Enemy).AddForce(dir * ((obj as Enemy).speed + m_enemySpeedBoost));
-                                                break;
-                                            }
-                                        }
-
-                                        if (
-                                          obj.obb.center.Y <= ResourceManager.pathLeft.GetPos(0).Y)
-                                        {
-                                            obj.SetPosition(ResourceManager.pathLeft.GetPos(0) + Vector2.UnitY * 10);
-
-                                            break;
-                                        }
-
-                                    }
-                                }
-                                    
-                                
-                            }
-                            if (obj.texName == "day")
-                            {
-                                
-                                if(m_dayNightCycle.IsDone())
-                                {
-                                    m_dayNightCycle.ResetAndStart(m_nightTime);
-                                    obj.texName = "night";
-                                    m_day = false;
-                                }
-                            }
-                            else if(obj.texName == "night")
-                            {
-                                if (m_dayNightCycle.IsDone())
-                                {
-                                    m_dayNightCycle.ResetAndStart(m_dayTime);
-                                    obj.texName = "day";
-                                    m_day = true;
-                                    m_days++;
-                                    m_enemySpeedBoost += 10;
-                                }
-                            }
-                            if (obj.texName =="sun"||obj.texName=="moon")
-                            {
-                                if(m_day == false&& oldday != m_day)
-                                {
-                                    m_celestialObjectPos = new Vector2(1856, 125);
-                                    obj.texName = "moon";
-                                    oldday = m_day;
-                                    m_celestialSpeed = m_celestialObjectPos.X / (float)m_nightTime;
-
-                                }
-                                else if(oldday!= m_day && m_day == true)
-                                {
-                                    obj.texName = "sun";
-                                    m_celestialObjectPos = new Vector2(1856, 125);
-                                    oldday = m_day;
-                                    m_celestialSpeed = m_celestialObjectPos.X / (float)m_dayTime;
-                                }
-                                obj.SetPosition(m_celestialObjectPos);
-                            }
-
-                            if(!GameManager.pause)
-                            {
-                                if (!m_day || obj is not Enemy)
-                                    obj.Update((float)dt);
-                            }
-                           
                             
-
-                        }
-                        foreach (GameObject obj in ResourceManager.GetSetAllObjects())
-                        {
-                            if(obj is Enemy)
+                            foreach (GameObject obj in ResourceManager.GetSetAllObjects())
                             {
-                                if((obj as Enemy).health<=0)
+                                if (obj is Tower)
                                 {
-                                    ResourceManager.GetSetAllObjects().Remove(obj);
-                                    if(obj.texName=="whitemonster")
+                                    (obj as Tower).night = !m_day;
+                                }
+
+
+                                if (obj is Enemy &&!m_day)
+                                {
+                                    if (obj.obb.center.Y >= ResourceManager.pathRight.GetPos(5).Y)
                                     {
-                                        m_whitemonsterskilled++;
+                                        m_gameover = true;
+                                    }
+
+                                    if (obj.texName == "whitemonster")
+                                    {
+                                        for (int i = 0; i < 5; i++)
+                                        {
+                                            Vector2 pos1 = ResourceManager.pathRight.GetPos(i);
+                                            Vector2 pos2 = ResourceManager.pathRight.GetPos(i + 1);
+
+                                            float d1 = pos2.Y - pos1.Y;
+                                            float d2 = pos2.X - pos1.X;
+                                            if (MathF.Abs(d2) > MathF.Abs(d1))
+                                            {
+                                                if (obj.obb.center.X >= pos2.X
+                                                && obj.obb.center.X <= pos1.X)
+                                                {
+                                                    Vector2 dir = pos2 - pos1;
+                                                    dir.Normalize();
+                                                    (obj as Enemy).AddForce(dir * ((obj as Enemy).speed + m_enemySpeedBoost));
+                                                    break;
+                                                }
+
+                                            }
+                                            else
+                                            {
+                                                if (obj.obb.center.Y >= pos1.Y
+                                                && obj.obb.center.Y <= pos2.Y)
+                                                {
+                                                    Vector2 dir = pos2 - pos1;
+                                                    dir.Normalize();
+                                                    (obj as Enemy).AddForce(dir * ((obj as Enemy).speed + m_enemySpeedBoost));
+                                                    break;
+                                                }
+                                            }
+
+                                            if (
+                                              obj.obb.center.Y <= ResourceManager.pathRight.GetPos(0).Y)
+                                            {
+                                                obj.SetPosition(ResourceManager.pathRight.GetPos(0) + Vector2.UnitY * 10);
+                                                break;
+
+                                            }
+
+                                        }
                                     }
                                     else
                                     {
-                                        m_darkmonterskilled++;
+                                        for (int i = 0; i < 5; i++)
+                                        {
+                                            Vector2 pos1 = ResourceManager.pathLeft.GetPos(i);
+                                            Vector2 pos2 = ResourceManager.pathLeft.GetPos(i + 1);
+
+                                            float d1 = pos2.Y - pos1.Y;
+                                            float d2 = pos2.X - pos1.X;
+                                            if (MathF.Abs(d2) > MathF.Abs(d1))
+                                            {
+                                                if (obj.obb.center.X >= pos1.X
+                                                && obj.obb.center.X <= pos2.X)
+                                                {
+                                                    Vector2 dir = pos2 - pos1;
+                                                    dir.Normalize();
+                                                    (obj as Enemy).AddForce(dir * ((obj as Enemy).speed + m_enemySpeedBoost));
+                                                    break;
+                                                }
+
+                                            }
+                                            else
+                                            {
+                                                if (obj.obb.center.Y >= pos1.Y
+                                                && obj.obb.center.Y <= pos2.Y)
+                                                {
+                                                    Vector2 dir = pos2 - pos1;
+                                                    dir.Normalize();
+                                                    (obj as Enemy).AddForce(dir * ((obj as Enemy).speed + m_enemySpeedBoost));
+                                                    break;
+                                                }
+                                            }
+
+                                            if (
+                                              obj.obb.center.Y <= ResourceManager.pathLeft.GetPos(0).Y)
+                                            {
+                                                obj.SetPosition(ResourceManager.pathLeft.GetPos(0) + Vector2.UnitY * 10);
+
+                                                break;
+                                            }
+
+                                        }
                                     }
-                                    m_money += 10;
-                                    break;
+
+
                                 }
-                            }
-                        }
-                        if (!m_day)
-                        {
-                            if (m_enemySpawnTimer.IsDone())
-                            {
-                                m_obb.center = ResourceManager.pathLeft.GetPos(0) + Vector2.UnitY * 10;
-                                m_obb.size = new Vector2(240, 60);
-                                GameObject go = new Enemy(m_obb, "blackmonster");
-                                (go as Enemy).speed = m_random.Next(1000, 1400);
-                                ResourceManager.AddObject(go);
-                                m_enemySpawnTimer.ResetAndStart(m_enemyspawn);
-                            }
-                            if(m_enemytoughTimer.IsDone())
-                            {
-                                m_obb.center = ResourceManager.pathRight.GetPos(0) + Vector2.UnitY * 10;
-                                m_obb.size = new Vector2(240, 60);
-                                GameObject go = new Enemy(m_obb, "whitemonster");
-                                (go as Enemy).speed = m_random.Next(1400, 1800);
-                                ResourceManager.AddObject(go);
-                                m_enemytoughTimer.ResetAndStart(m_enemyspawn * 2);
+                                if (obj.texName == "day")
+                                {
+
+                                    if (m_dayNightCycle.IsDone())
+                                    {
+                                        m_dayNightCycle.ResetAndStart(m_nightTime);
+                                        obj.texName = "night";
+                                        m_day = false;
+                                    }
+                                }
+                                else if (obj.texName == "night")
+                                {
+                                    if (m_dayNightCycle.IsDone())
+                                    {
+                                        m_dayNightCycle.ResetAndStart(m_dayTime);
+                                        obj.texName = "day";
+                                        m_day = true;
+                                        m_days++;
+                                        m_enemySpeedBoost += 10;
+                                    }
+                                }
+                                if (obj.texName == "sun" || obj.texName == "moon")
+                                {
+                                    if (m_day == false && oldday != m_day)
+                                    {
+                                        m_celestialObjectPos = new Vector2(1856, 125);
+                                        obj.texName = "moon";
+                                        oldday = m_day;
+                                        m_celestialSpeed = m_celestialObjectPos.X / (float)m_nightTime;
+
+                                    }
+                                    else if (oldday != m_day && m_day == true)
+                                    {
+                                        obj.texName = "sun";
+                                        m_celestialObjectPos = new Vector2(1856, 125);
+                                        oldday = m_day;
+                                        m_celestialSpeed = m_celestialObjectPos.X / (float)m_dayTime;
+                                    }
+                                    obj.SetPosition(m_celestialObjectPos);
+                                }
+                                if (!m_day || obj is not Enemy)
+                                    obj.Update((float)dt);
                             }
 
+
+
+                            foreach (GameObject obj in ResourceManager.GetSetAllObjects())
+                            {
+                                if (obj is Enemy &&!m_day)
+                                {
+                                    if ((obj as Enemy).health <= 0)
+                                    {
+                                        ResourceManager.GetSetAllObjects().Remove(obj);
+                                        SoundManager.Play(SOUND_FX.MONEY);
+                                        if (obj.texName == "whitemonster")
+                                        {
+                                            m_whitemonsterskilled++;
+                                        }
+                                        else
+                                        {
+                                            m_darkmonterskilled++;
+                                        }
+                                        m_money += 10;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (!m_day)
+                            {
+                                if (m_enemySpawnTimer.IsDone())
+                                {
+                                    m_obb.center = ResourceManager.pathLeft.GetPos(0) + Vector2.UnitY * 10;
+                                    m_obb.size = new Vector2(240, 60);
+                                    GameObject go = new Enemy(m_obb, "blackmonster");
+                                    (go as Enemy).speed = m_random.Next(1000, 1400);
+                                    ResourceManager.AddObject(go);
+                                    m_enemySpawnTimer.ResetAndStart(m_enemyspawn);
+                                }
+                                if (m_enemytoughTimer.IsDone())
+                                {
+                                    m_obb.center = ResourceManager.pathRight.GetPos(0) + Vector2.UnitY * 10;
+                                    m_obb.size = new Vector2(240, 60);
+                                    GameObject go = new Enemy(m_obb, "whitemonster");
+                                    (go as Enemy).speed = m_random.Next(1400, 1800);
+                                    ResourceManager.AddObject(go);
+                                    m_enemytoughTimer.ResetAndStart(m_enemyspawn * 2);
+                                }
+
+                            }
+
+
                         }
+                        
                         
                         break;
                     }

@@ -25,6 +25,12 @@
 /processorParam:TextureFormat=Color
 /build:blackmonster.png
 
+#begin build.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:build.wav
+
 #begin castle.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -116,6 +122,12 @@
 /processorParam:TextureFormat=Color
 /build:menuText.png
 
+#begin money.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:money.wav
+
 #begin moon.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -152,6 +164,12 @@
 /processorParam:TextureFormat=Color
 /build:night.png
 
+#begin over.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:over.wav
+
 #begin path.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -163,6 +181,12 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:path.png
+
+#begin shoot.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:shoot.wav
 
 #begin star.png
 /importer:TextureImporter
